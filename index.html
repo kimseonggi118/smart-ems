@@ -218,7 +218,371 @@
             line-height: 1.5;
             margin-top: 12px;
         }
+/* =========================
+   추천 병원 결과 화면
+========================= */
 
+.result-header {
+    background: linear-gradient(135deg, #0c2340, #0b3b75);
+    color: white;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.result-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.result-title {
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.result-update {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.risk-card {
+    background: white;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.risk-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.risk-badge {
+    background: linear-gradient(135deg, #ff2b2b, #e60012);
+    color: white;
+    border-radius: 12px;
+    padding: 14px;
+    font-weight: bold;
+}
+
+.risk-badge-title {
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.risk-badge-sub {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.risk-summary {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.risk-summary-title {
+    font-weight: 900;
+    margin-bottom: 6px;
+}
+
+.risk-summary-score {
+    color: #e60012;
+    font-weight: 900;
+}
+
+.patient-summary-card {
+    background: white;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.patient-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.summary-item {
+    padding-right: 10px;
+    border-right: 1px solid #e5e7eb;
+}
+
+.summary-item:last-child {
+    border-right: none;
+}
+
+.summary-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.summary-value {
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.45;
+}
+
+.hospital-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-bottom: 10px;
+}
+
+.hospital-tab {
+    border: 1px solid #d8dee8;
+    background: white;
+    padding: 13px;
+    font-weight: 900;
+    font-size: 15px;
+}
+
+.hospital-tab:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+.hospital-tab:last-child {
+    border-radius: 0 10px 10px 0;
+}
+
+.hospital-tab.active {
+    background: #0c3b73;
+    color: white;
+    border-color: #0c3b73;
+}
+
+.recommend-info {
+    background: #edf6ff;
+    border: 1px solid #cfe4ff;
+    color: #164c87;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.recommend-card {
+    background: white;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+}
+
+.recommend-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.rank-badge {
+    min-width: 44px;
+    height: 56px;
+    background: linear-gradient(180deg, #ffbf00, #e99a00);
+    color: #111;
+    border-radius: 8px;
+    font-size: 24px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rank-badge.rank-2 {
+    background: linear-gradient(180deg, #d5d9df, #aeb4bd);
+}
+
+.rank-badge.rank-3 {
+    background: linear-gradient(180deg, #d99036, #b86a17);
+}
+
+.recommend-main {
+    flex: 1;
+}
+
+.recommend-name {
+    font-size: 17px;
+    font-weight: 900;
+    margin-bottom: 6px;
+}
+
+.recommend-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.recommend-tag {
+    background: #f1f3f6;
+    color: #444;
+    border-radius: 6px;
+    padding: 4px 7px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.recommend-score {
+    background: #e8f7e8;
+    color: #16821d;
+    border-radius: 9px;
+    padding: 7px 10px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.recommend-body {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.2fr;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.reason-box,
+.arrival-box,
+.accept-box {
+    border-radius: 10px;
+    padding: 11px;
+}
+
+.reason-box {
+    background: #fffaf0;
+    border: 1px solid #ffe0a3;
+}
+
+.arrival-box {
+    background: #fff7f7;
+    border: 1px solid #ffc9c9;
+    text-align: center;
+}
+
+.accept-box {
+    background: #fff7f7;
+    border: 1px solid #ffc9c9;
+    text-align: center;
+}
+
+.box-title {
+    font-size: 12px;
+    font-weight: 900;
+    margin-bottom: 6px;
+    color: #a65c00;
+}
+
+.arrival-main {
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 4px;
+}
+
+.arrival-sub {
+    font-size: 11px;
+    color: #555;
+}
+
+.accept-main {
+    color: #d72626;
+    font-weight: 900;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.recommend-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.recommend-actions .button {
+    width: 100%;
+}
+
+.detail-btn {
+    background: white;
+    color: #444;
+    border: 1px solid #d8dee8;
+}
+
+.criteria-box {
+    background: white;
+    border: 1px solid #bfd7ff;
+    border-radius: 12px;
+    padding: 13px;
+    margin-top: 12px;
+}
+
+.criteria-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.criteria-item {
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.45;
+    border-right: 1px solid #e5e7eb;
+}
+
+.criteria-item:last-child {
+    border-right: none;
+}
+
+@media (max-width: 700px) {
+
+    .risk-row {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-summary-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .summary-item {
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 8px;
+    }
+
+    .recommend-top {
+        flex-wrap: wrap;
+    }
+
+    .recommend-score {
+        margin-left: auto;
+    }
+
+    .recommend-body {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .reason-box {
+        grid-column: 1 / 3;
+    }
+
+    .recommend-actions {
+        grid-column: 1 / 3;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .recommend-actions .button {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .criteria-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
     </style>
 </head>
 
@@ -350,23 +714,27 @@ if ("serviceWorker" in navigator) {
 
 <div class="title">
 
-    2. 병원 후보
+    추천 병원 결과
 
 </div>
 
 
-<div class="card"
-     style="font-size:12px;color:#666;">
+<div class="result-header">
 
-    🕒 마지막 갱신:
+    <div class="result-header-top">
 
-    <span id="updateTime">
-        대기 중
-    </span>
+        <div class="result-title">
+            추천 병원 결과
+        </div>
 
-    <br>
+        <div class="result-update">
+            🕒 마지막 업데이트
+            <span id="updateTime">
+                대기 중
+            </span>
+        </div>
 
-    📡 현재는 테스트용 병원 데이터입니다.
+    </div>
 
 </div>
 
@@ -380,8 +748,142 @@ if ("serviceWorker" in navigator) {
     </div>
 
 </div>
+<!-- 환자 상태 평가 -->
+
+<div class="risk-card">
+
+    <div class="risk-row">
+
+        <div class="risk-badge">
+
+            <div class="risk-badge-title">
+                🚨 환자 상태 평가
+            </div>
+
+            <div class="risk-badge-sub" id="riskStatus">
+                증상과 바이탈을 입력하면
+                환자 상태를 평가합니다.
+            </div>
+
+        </div>
+
+        <div class="risk-summary">
+
+            <div class="risk-summary-title">
+                자동 중증도 판단 결과
+            </div>
+
+            <div>
+                현재 단계에서는
+                <span class="risk-summary-score">
+                    중증도 계산 준비 중
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- 입력 요약 -->
+
+<div class="patient-summary-card">
+
+    <div class="title">
+        입력 요약
+    </div>
+
+    <div class="patient-summary-grid">
+
+        <div class="summary-item">
+
+            <div class="summary-label">
+                🔥 주요 증상
+            </div>
+
+            <div class="summary-value" id="summarySymptom">
+                미선택
+            </div>
+
+        </div>
 
 
+        <div class="summary-item">
+
+            <div class="summary-label">
+                👤 의식 상태
+            </div>
+
+            <div class="summary-value">
+                입력 기능 연결 예정
+            </div>
+
+        </div>
+
+
+        <div class="summary-item">
+
+            <div class="summary-label">
+                ❤️ 바이탈 요약
+            </div>
+
+            <div class="summary-value">
+                BP / HR / SpO₂ / RR
+                <br>
+                입력 기능 연결 예정
+            </div>
+
+        </div>
+
+
+        <div class="summary-item">
+
+            <div class="summary-label">
+                📍 현재 위치
+            </div>
+
+            <div class="summary-value" id="summaryLocation">
+                GPS 확인 중
+            </div>
+
+        </div>
+
+    </div>
+
+</div>    
+    
+<!-- 실제 병원 목록 -->
+<!-- 추천 병원 / 가까운 병원 -->
+
+<div class="hospital-tabs">
+
+    <button
+        id="recommendTab"
+        class="hospital-tab active"
+        onclick="changeHospitalTab('recommend')">
+        ⭐ 추천 병원
+    </button>
+
+    <button
+        id="nearTab"
+        class="hospital-tab"
+        onclick="changeHospitalTab('near')">
+        📍 가까운 병원
+    </button>
+
+</div>
+
+<div class="recommend-info" id="recommendInfo">
+    ℹ️ 현재는 GPS와 실제 응급의료기관 데이터를 기준으로 표시합니다.
+    질환별 병원 추천은 중증질환 수용가능정보 연결 후 적용됩니다.
+</div>
+<div id="hospitalList">
+
+    <div class="empty">
+        환자 주요 증상을 선택해 주세요.
+    </div>
+
+</div>
 <div class="warning">
 
     ⚠️ 이 시스템은 구급 이송 판단을
@@ -742,12 +1244,61 @@ async function loadNearbyHospitals() {
 /* ==============================
    증상 선택
 ============================== */
+let selectedSymptom = null;    
+let currentHospitalTab = "recommend";
 
+function changeHospitalTab(tab) {
+
+    currentHospitalTab = tab;
+
+    document
+        .getElementById("recommendTab")
+        .classList.toggle(
+            "active",
+            tab === "recommend"
+        );
+
+    document
+        .getElementById("nearTab")
+        .classList.toggle(
+            "active",
+            tab === "near"
+        );
+
+    const info =
+        document.getElementById(
+            "recommendInfo"
+        );
+
+    if (tab === "near") {
+
+        info.innerText =
+            "📍 현재 GPS 위치를 기준으로 가까운 응급의료기관부터 표시합니다.";
+
+    } else {
+
+        info.innerText =
+            "⭐ 현재는 실제 병원 위치 데이터를 기준으로 표시하며, 질환별 추천은 중증질환 수용가능정보 연결 후 적용됩니다.";
+
+    }
+
+    if (selectedSymptom) {
+
+        selectSymptom(
+            selectedSymptom,
+            document.querySelector(
+                ".symptom.active"
+            )
+        );
+
+    }
+
+}
 function selectSymptom(
     symptom,
     button
 ) {
-
+    selectedSymptom = symptom;
     document
         .querySelectorAll(".symptom")
         .forEach(function(btn) {
@@ -766,26 +1317,36 @@ function selectSymptom(
     let filteredHospitals = [];
 
 
-    if (symptom === "일반") {
+if (symptom === "일반") {
 
-        filteredHospitals =
-            hospitals
-            .slice()
-            .sort(function(a, b) {
+    filteredHospitals =
+        hospitals
+        .slice()
+        .sort(function(a, b) {
 
-                return (
-                    a.distance
-                    -
-                    b.distance
-                );
+            return a.distance - b.distance;
 
-            });
+        });
 
-    } else {
+} else {
 
-        filteredHospitals = [];
+    /*
+      중증 화상 / 외상 / 심뇌혈관은
+      아직 중증질환 수용가능정보 API 연결 전입니다.
+      현재는 주변 실제 응급의료기관을 거리순으로 보여주되,
+      "추천"으로 확정하지 않습니다.
+    */
 
-    }
+    filteredHospitals =
+        hospitals
+        .slice()
+        .sort(function(a, b) {
+
+            return a.distance - b.distance;
+
+        });
+
+}
 
 
     showHospitals(
@@ -805,37 +1366,93 @@ function showHospitals(
     symptom
 ) {
 
-
     const list =
         document.getElementById(
             "hospitalList"
         );
 
-
     list.innerHTML = "";
-if (hospitals.length === 0) {
 
-    if (symptom === "일반") {
+    /* 병원 데이터가 없을 때 */
+    if (hospitals.length === 0) {
 
         list.innerHTML =
             '<div class="empty">' +
             '주변 응급의료기관 정보를 불러오지 못했거나 검색 결과가 없습니다.' +
             '</div>';
 
-    } else {
-
-        list.innerHTML =
-            '<div class="empty">' +
-            '이 증상은 아직 중증질환 수용가능정보 API 연결 전입니다.' +
-            '</div>';
-
+        return;
     }
 
-    return;
-}
 
-    hospitals.forEach(
-        function(hospital) {
+    /* 최대 10개 병원 표시 */
+    const displayHospitals =
+        hospitals.slice(0, 10);
+
+
+    displayHospitals.forEach(
+        function(hospital, index) {
+
+            const rank = index + 1;
+
+            let rankClass = "";
+
+            if (rank === 2) {
+                rankClass = "rank-2";
+            }
+
+            if (rank === 3) {
+                rankClass = "rank-3";
+            }
+
+
+            /* 거리값 안전하게 처리 */
+            const distance =
+                typeof hospital.distance === "number"
+                    ? hospital.distance.toFixed(1)
+                    : "-";
+
+
+            /* 병원명 */
+            const hospitalName =
+                hospital.name || "병원명 정보 없음";
+
+
+            /* 전화번호 */
+            const phone =
+                hospital.phone || "";
+
+
+            /* 주소 */
+            const address =
+                hospital.address || "주소 정보 없음";
+
+
+            /* 전화 버튼 */
+            let phoneButton = "";
+
+            if (phone) {
+
+                phoneButton = `
+                    <a
+                        class="button call"
+                        href="tel:${phone}">
+                        📞 응급실 전화
+                    </a>
+                `;
+
+            } else {
+
+                phoneButton = `
+                    <button
+                        class="button call"
+                        disabled
+                        style="opacity:0.5;">
+                        📞 전화번호 없음
+                    </button>
+                `;
+
+            }
 
 
             const card =
@@ -843,73 +1460,179 @@ if (hospitals.length === 0) {
                     "div"
                 );
 
-
             card.className =
-                "hospital";
+                "recommend-card";
 
 
             card.innerHTML = `
 
-                <div class="hospital-top">
+                <div class="recommend-top">
 
-                    <div class="hospital-name">
+                    <div class="rank-badge ${rankClass}">
+                        ${rank}
+                    </div>
 
-                        ${hospital.name}
+                    <div class="recommend-main">
+
+                        <div class="recommend-name">
+                            ${hospitalName}
+                        </div>
+
+                        <div class="recommend-tags">
+
+                            <span class="recommend-tag">
+                                응급의료기관
+                            </span>
+
+                            <span class="recommend-tag">
+                                E-GEN 공공데이터
+                            </span>
+
+                        </div>
 
                     </div>
 
-<div class="time">
+                    <div class="recommend-score">
 
-    📍
-    ${hospital.distance.toFixed(1)}
-    km
+                        ${
+                            currentHospitalTab === "near"
+                                ? "거리순"
+                                : "추천 검토"
+                        }
 
-</div>
-
-                </div>
-
-
-                <div class="status">
-
-                    ⚠️ 수용 여부 확인 필요
+                    </div>
 
                 </div>
 
 
-                <div class="hospital-info">
+                <div class="recommend-body">
 
-                    🔹 ${hospital.info}
+                    <div class="reason-box">
+
+                        <div class="box-title">
+                            추천 정보
+                        </div>
+
+                        <div
+                            style="
+                                font-size:12px;
+                                line-height:1.7;
+                            "
+                        >
+
+                            ✅ 현재 위치 기준 주변 응급의료기관
+
+                            <br>
+
+                            ✅ 직선거리 약 ${distance} km
+
+                            <br>
+
+                            ⚠️ ${symptom} 환자 수용 가능 여부 확인 필요
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="arrival-box">
+
+                        <div
+                            class="box-title"
+                            style="color:#d72626;"
+                        >
+                            현재 거리
+                        </div>
+
+                        <div class="arrival-main">
+                            ${distance} km
+                        </div>
+
+                        <div class="arrival-sub">
+                            GPS 기준 직선거리
+                        </div>
+
+                    </div>
+
+
+                    <div class="accept-box">
+
+                        <div
+                            class="box-title"
+                            style="color:#d72626;"
+                        >
+                            수용 가능성
+                        </div>
+
+                        <div class="accept-main">
+                            ❗ 확인 필요
+                        </div>
+
+                        <div class="arrival-sub">
+                            병원 전화 확인 권장
+                        </div>
+
+                    </div>
+
+
+                    <div class="recommend-actions">
+
+                        ${phoneButton}
+
+                        <button
+                            class="button map"
+                            onclick="openTmap(
+                                '${hospitalName.replace(/'/g, "\\'")}',
+                                ${hospital.lat},
+                                ${hospital.lon}
+                            )"
+                        >
+                            🚗 T맵 길찾기
+                        </button>
+
+                        <button
+                            class="button detail-btn"
+                            onclick="showHospitalDetail(${index})"
+                        >
+                            상세 정보 ▼
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="detail-${index}"
+                    style="
+                        display:none;
+                        margin-top:10px;
+                        padding:12px;
+                        background:#f7f9fc;
+                        border-radius:8px;
+                        font-size:12px;
+                        line-height:1.7;
+                    "
+                >
+
+                    📍 ${address}
 
                     <br>
 
-                    🔹 선택 증상:
-                    ${symptom}
+                    📞 ${phone || "전화번호 정보 없음"}
 
-                </div>
+                    <br>
 
+                    🚑 현재 위치에서 약 ${distance} km
 
-                <div class="buttons">
+                    <br>
 
-                    <a
-                        class="button call"
-                        href="tel:${hospital.phone}">
+                    🏥 선택 증상: ${symptom}
 
-                        📞 응급실 전화
+                    <br>
 
-                    </a>
-
-
-                    <button
-                        class="button map"
-                        onclick="openTmap(
-                            '${hospital.name}',
-                            ${hospital.lat},
-                            ${hospital.lon}
-                        )">
-
-                        🚗 T맵 길찾기
-
-                    </button>
+                    ⚠️ 실제 수용 여부와 병상 상태는
+                    해당 병원에 직접 확인해야 합니다.
 
                 </div>
 
@@ -924,14 +1647,79 @@ if (hospitals.length === 0) {
     );
 
 
-    document.getElementById(
-        "updateTime"
-    ).innerText =
+    /* 마지막 업데이트 시간 */
 
-        new Date()
-        .toLocaleString(
-            "ko-KR"
+    const updateTime =
+        document.getElementById(
+            "updateTime"
         );
+
+    if (updateTime) {
+
+        updateTime.innerText =
+            new Date()
+                .toLocaleTimeString(
+                    "ko-KR",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                );
+
+    }
+
+
+    /* 입력 요약 - 선택 증상 표시 */
+
+    const summarySymptom =
+        document.getElementById(
+            "summarySymptom"
+        );
+
+    if (summarySymptom) {
+
+        const symptomNames = {
+
+            "화상": "🔥 중증 화상",
+            "외상": "💥 중증 외상",
+            "심뇌": "🧠 심·뇌혈관",
+            "일반": "🏥 일반 응급"
+
+        };
+
+        summarySymptom.innerText =
+            symptomNames[symptom] || symptom;
+
+    }
+
+}
+
+
+/* 상세 정보 열기 / 닫기 */
+
+function showHospitalDetail(index) {
+
+    const detail =
+        document.getElementById(
+            "detail-" + index
+        );
+
+    if (!detail) {
+        return;
+    }
+
+    if (
+        detail.style.display === "none" ||
+        detail.style.display === ""
+    ) {
+
+        detail.style.display = "block";
+
+    } else {
+
+        detail.style.display = "none";
+
+    }
 
 }
 
