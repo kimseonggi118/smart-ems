@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0,
+                   viewport-fit=cover">
+
+    <meta name="theme-color"
+          content="#0c2340">
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0c2340">
+
+    <title>스마트 구급 이송 시스템</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family:
+                Arial,
+                "Noto Sans KR",
+                sans-serif;
+        }
+
+        body {
+            background: #f3f6fa;
+            color: #222;
+            padding: 12px;
+        }
+
+        header {
+            background: #0c2340;
+            color: white;
+            padding: 18px;
+            border-radius: 14px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        header h1 {
+            font-size: 20px;
+        }
+
+        header p {
+            font-size: 13px;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow:
+                0 2px 8px
+                rgba(0,0,0,0.06);
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        /* 위치 */
+
+        .location {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .location-info {
+            flex: 1;
+        }
+
+        .location-status {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .location-detail {
+            color: #777;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .refresh {
+            background: #1565c0;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        /* 증상 */
+
+        .symptom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .symptom {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 16px 5px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .symptom.active {
+            border-color: #1565c0;
+            background: #eaf3ff;
+            color: #1565c0;
+        }
+
+        /* 병원 */
+
+        .hospital {
+            background: white;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+            border-left: 5px solid #1565c0;
+            box-shadow:
+                0 2px 8px
+                rgba(0,0,0,0.06);
+        }
+
+        .hospital-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .hospital-name {
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        .time {
+            white-space: nowrap;
+            background: #fff3cd;
+            color: #765000;
+            padding: 5px 7px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .hospital-info {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 7px;
+            border-radius: 7px;
+            background: #fff0c7;
+            color: #805600;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .button {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 5px;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .call {
+            background: #1565c0;
+        }
+
+        .map {
+            background: #ff0055;
+        }
+
+        .empty {
+            background: white;
+            border-radius: 14px;
+            padding: 30px 10px;
+            text-align: center;
+            color: #777;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #e68a00;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-top: 12px;
+        }
+
+    </style>
+</head>
+
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("./service-worker.js")
+        .then(function() {
+            console.log("Service Worker 등록 성공");
+        })
+        .catch(function(error) {
+            console.log("Service Worker 등록 실패:", error);
+        });
+    });
+}
+</script>
+
+<body>
+
+<header>
+
+    <h1>
+        🚑 삼성전자 자체소방대
+    </h1>
+
+    <p>
+        스마트 구급 이송 지원 시스템
+    </p>
+
+</header>
+
+
+<!-- 현재 위치 -->
+
+<div class="card">
+
+    <div class="location">
+
+        <div style="font-size:25px;">
+            📍
+        </div>
+
+        <div class="location-info">
+
+            <div
+                id="locationStatus"
+                class="location-status">
+
+                위치 확인 대기
+
+            </div>
+
+            <div
+                id="locationDetail"
+                class="location-detail">
+
+                현재 위치를 확인합니다.
+
+            </div>
+
+        </div>
+
+        <button
+            class="refresh"
+            onclick="getLocation()">
+
+            위치 갱신
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- 증상 선택 -->
+
+<div class="card">
+
+    <div class="title">
+
+        1. 환자 주요 증상
+
+    </div>
+
+    <div class="symptom-grid">
+
+        <button
+            class="symptom"
+            onclick="selectSymptom('화상', this)">
+
+            🔥 중증 화상
+
+        </button>
+
+
+        <button
+            class="symptom"
+            onclick="selectSymptom('외상', this)">
+
+            💥 중증 외상
+
+        </button>
+
+
+        <button
+            class="symptom"
+            onclick="selectSymptom('심뇌', this)">
+
+            🧠 심·뇌혈관
+
+        </button>
+
+
+        <button
+            class="symptom"
+            onclick="selectSymptom('일반', this)">
+
+            🏥 일반 응급
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- 병원 목록 -->
+
+<div class="title">
+
+    2. 병원 후보
+
+</div>
+
+
+<div class="card"
+     style="font-size:12px;color:#666;">
+
+    🕒 마지막 갱신:
+
+    <span id="updateTime">
+        대기 중
+    </span>
+
+    <br>
+
+    📡 현재는 테스트용 병원 데이터입니다.
+
+</div>
+
+
+<div id="hospitalList">
+
+    <div class="empty">
+
+        환자 주요 증상을 선택해 주세요.
+
+    </div>
+
+</div>
+
+
+<div class="warning">
+
+    ⚠️ 이 시스템은 구급 이송 판단을
+    보조하기 위한 프로토타입입니다.
+
+    <br><br>
+
+    병원 수용 여부와 병상 상태는
+    반드시 해당 병원에 직접 확인해야 합니다.
+
+</div>
+
+
+<script>
+
+/* ==============================
+   현재 위치
+============================== */
+
+let userLatitude = null;
+
+let userLongitude = null;
+
+
+function getLocation() {
+
+    const status =
+        document.getElementById(
+            "locationStatus"
+        );
+
+    const detail =
+        document.getElementById(
+            "locationDetail"
+        );
+
+
+    if (!navigator.geolocation) {
+
+        status.innerText =
+            "⚠️ 위치 기능을 사용할 수 없습니다.";
+
+        return;
+
+    }
+
+
+    status.innerText =
+        "📡 위치 확인 중...";
+
+    detail.innerText =
+        "GPS 정보를 가져오고 있습니다.";
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            userLatitude =
+                position.coords.latitude;
+
+            userLongitude =
+                position.coords.longitude;
+
+
+            status.innerText =
+                "✅ 현재 위치 확인 완료";
+
+
+            detail.innerText =
+
+                "위도 "
+                +
+                userLatitude.toFixed(5)
+                +
+                " / 경도 "
+                +
+                userLongitude.toFixed(5);
+
+        },
+
+
+        function(error) {
+
+            status.innerText =
+                "⚠️ 위치 확인 실패";
+
+            detail.innerText =
+                "브라우저의 위치 권한을 확인해주세요.";
+
+        },
+
+        {
+
+            enableHighAccuracy: true,
+
+            timeout: 10000,
+
+            maximumAge: 0
+
+        }
+
+    );
+
+}
+
+
+/* ==============================
+   병원 데이터
+============================== */
+
+const hospitals = [
+
+    {
+        name:
+            "한림대학교 동탄성심병원",
+
+        phone:
+            "03180863000",
+
+        lat:
+            37.2081,
+
+        lon:
+            127.0706,
+
+        symptoms:
+            [
+                "화상",
+                "외상",
+                "심뇌",
+                "일반"
+            ],
+
+        minutes:
+            7,
+
+        info:
+            "응급실 및 중증환자 수용 여부 확인"
+    },
+
+
+    {
+        name:
+            "아주대학교병원 권역외상센터",
+
+        phone:
+            "0312195114",
+
+        lat:
+            37.2794,
+
+        lon:
+            127.0478,
+
+        symptoms:
+            [
+                "화상",
+                "외상",
+                "심뇌",
+                "일반"
+            ],
+
+        minutes:
+            22,
+
+        info:
+            "권역외상센터 수용 여부 확인"
+    },
+
+
+    {
+        name:
+            "가톨릭대학교 성빈센트병원",
+
+        phone:
+            "0312497114",
+
+        lat:
+            37.2778,
+
+        lon:
+            127.0275,
+
+        symptoms:
+            [
+                "심뇌",
+                "일반"
+            ],
+
+        minutes:
+            25,
+
+        info:
+            "응급실 병상 및 진료 가능 여부 확인"
+    },
+
+
+    {
+        name:
+            "화성중앙종합병원",
+
+        phone:
+            "0313528114",
+
+        lat:
+            37.1895,
+
+        lon:
+            126.9240,
+
+        symptoms:
+            [
+                "일반"
+            ],
+
+        minutes:
+            18,
+
+        info:
+            "응급실 수용 여부 확인"
+    }
+
+];
+
+
+/* ==============================
+   증상 선택
+============================== */
+
+function selectSymptom(
+    symptom,
+    button
+) {
+
+
+    document
+        .querySelectorAll(".symptom")
+        .forEach(
+            function(btn) {
+
+                btn.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    button.classList.add(
+        "active"
+    );
+
+
+    const filteredHospitals =
+
+        hospitals
+        .filter(
+            function(hospital) {
+
+                return hospital
+                    .symptoms
+                    .includes(
+                        symptom
+                    );
+
+            }
+        )
+        .sort(
+            function(a, b) {
+
+                return (
+                    a.minutes
+                    -
+                    b.minutes
+                );
+
+            }
+        );
+
+
+    showHospitals(
+        filteredHospitals,
+        symptom
+    );
+
+}
+
+
+/* ==============================
+   병원 표시
+============================== */
+
+function showHospitals(
+    hospitals,
+    symptom
+) {
+
+
+    const list =
+        document.getElementById(
+            "hospitalList"
+        );
+
+
+    list.innerHTML = "";
+
+
+    hospitals.forEach(
+        function(hospital) {
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "hospital";
+
+
+            card.innerHTML = `
+
+                <div class="hospital-top">
+
+                    <div class="hospital-name">
+
+                        ${hospital.name}
+
+                    </div>
+
+                    <div class="time">
+
+                        🚗 약
+                        ${hospital.minutes}
+                        분
+
+                    </div>
+
+                </div>
+
+
+                <div class="status">
+
+                    ⚠️ 수용 여부 확인 필요
+
+                </div>
+
+
+                <div class="hospital-info">
+
+                    🔹 ${hospital.info}
+
+                    <br>
+
+                    🔹 선택 증상:
+                    ${symptom}
+
+                </div>
+
+
+                <div class="buttons">
+
+                    <a
+                        class="button call"
+                        href="tel:${hospital.phone}">
+
+                        📞 응급실 전화
+
+                    </a>
+
+
+                    <button
+                        class="button map"
+                        onclick="openTmap(
+                            '${hospital.name}',
+                            ${hospital.lat},
+                            ${hospital.lon}
+                        )">
+
+                        🚗 T맵 길찾기
+
+                    </button>
+
+                </div>
+
+            `;
+
+
+            list.appendChild(
+                card
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "updateTime"
+    ).innerText =
+
+        new Date()
+        .toLocaleString(
+            "ko-KR"
+        );
+
+}
+
+
+/* ==============================
+   T맵
+============================== */
+
+function openTmap(
+    name,
+    lat,
+    lon
+) {
+
+
+    const url =
+
+        "tmap://route"
+        +
+        "?goalname="
+        +
+        encodeURIComponent(
+            name
+        )
+        +
+        "&goalx="
+        +
+        lon
+        +
+        "&goaly="
+        +
+        lat;
+
+
+    window.location.href =
+        url;
+
+}
+
+
+/* ==============================
+   시작
+============================== */
+
+window.onload =
+    function() {
+
+        getLocation();
+
+    };
+
+</script>
+
+</body>
+</html>
