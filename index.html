@@ -991,7 +991,21 @@ function getLocation() {
                 " / 경도 "
                 +
                 userLongitude.toFixed(5);
+const summaryLocation =
+    document.getElementById(
+        "summaryLocation"
+    );
 
+if (summaryLocation) {
+
+    summaryLocation.innerText =
+        userLatitude.toFixed(5)
+        +
+        ", "
+        +
+        userLongitude.toFixed(5);
+
+}
             loadNearbyHospitals();
 
         },
@@ -1227,7 +1241,23 @@ async function loadNearbyHospitals() {
             "주변 실제 병원:",
             hospitals
         );
+if (selectedSymptom) {
 
+    const activeButton =
+        document.querySelector(
+            ".symptom.active"
+        );
+
+    if (activeButton) {
+
+        selectSymptom(
+            selectedSymptom,
+            activeButton
+        );
+
+    }
+
+}
 
     } catch (error) {
 
