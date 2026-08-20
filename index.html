@@ -1393,7 +1393,25 @@ function showHospitals(
         );
 
     list.innerHTML = "";
+/* 선택한 증상을 입력 요약에 바로 표시 */    
+const summarySymptom =
+    document.getElementById(
+        "summarySymptom"
+    );
 
+if (summarySymptom) {
+
+    const symptomNames = {
+        "화상": "🔥 중증 화상",
+        "외상": "💥 중증 외상",
+        "심뇌": "🧠 심·뇌혈관",
+        "일반": "🏥 일반 응급"
+    };
+
+    summarySymptom.innerText =
+        symptomNames[symptom] || symptom;
+
+}
     /* 병원 데이터가 없을 때 */
     if (hospitals.length === 0) {
 
