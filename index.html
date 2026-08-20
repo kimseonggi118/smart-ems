@@ -490,6 +490,8 @@ function getLocation() {
                 +
                 userLongitude.toFixed(5);
 
+            loadNearbyHospitals();
+
         },
 
 
@@ -522,119 +524,219 @@ function getLocation() {
    병원 데이터
 ============================== */
 
-const hospitals = [
-
-    {
-        name:
-            "한림대학교 동탄성심병원",
-
-        phone:
-            "03180863000",
-
-        lat:
-            37.2081,
-
-        lon:
-            127.0706,
-
-        symptoms:
-            [
-                "화상",
-                "외상",
-                "심뇌",
-                "일반"
-            ],
-
-        minutes:
-            7,
-
-        info:
-            "응급실 및 중증환자 수용 여부 확인"
-    },
+let hospitals = [];
 
 
-    {
-        name:
-            "아주대학교병원 권역외상센터",
+/* =====================================
+   공공데이터 API에서 주변 실제 병원 불러오기
+===================================== */
 
-        phone:
-            "0312195114",
+async function loadNearbyHospitals() {
 
-        lat:
-            37.2794,
-
-        lon:
-            127.0478,
-
-        symptoms:
-            [
-                "화상",
-                "외상",
-                "심뇌",
-                "일반"
-            ],
-
-        minutes:
-            22,
-
-        info:
-            "권역외상센터 수용 여부 확인"
-    },
-
-
-    {
-        name:
-            "가톨릭대학교 성빈센트병원",
-
-        phone:
-            "0312497114",
-
-        lat:
-            37.2778,
-
-        lon:
-            127.0275,
-
-        symptoms:
-            [
-                "심뇌",
-                "일반"
-            ],
-
-        minutes:
-            25,
-
-        info:
-            "응급실 병상 및 진료 가능 여부 확인"
-    },
-
-
-    {
-        name:
-            "화성중앙종합병원",
-
-        phone:
-            "0313528114",
-
-        lat:
-            37.1895,
-
-        lon:
-            126.9240,
-
-        symptoms:
-            [
-                "일반"
-            ],
-
-        minutes:
-            18,
-
-        info:
-            "응급실 수용 여부 확인"
+    if (
+        userLatitude === null ||
+        userLongitude === null
+    ) {
+        return;
     }
 
-];
+    try {
+
+        const workerUrl =
+            "https://smart-ems-api.tjdrl118.workers.dev/"
+            + "?lat="
+            + encodeURIComponent(userLatitude)
+            + "&lon="
+            + encodeURIComponent(userLongitude);
+
+
+        const response =
+            await fetch(workerUrl);
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "병원 API 호출 실패: "
+                + response.status
+            );
+
+        }
+
+
+        const xmlText =
+            await response.text();
+
+
+        const parser =
+            new DOMParser();
+
+
+        const xml =
+            parser.parseFromString(
+                xmlText,
+                "application/xml"
+            );
+
+
+        const resultCode =
+            xml.querySelector(
+                "resultCode"
+            )?.textContent;
+
+
+        if (resultCode !== "00") {
+
+            throw new Error(
+                "공공데이터 응답 오류: "
+                + resultCode
+            );
+
+        }
+
+
+        const items =
+            Array.from(
+                xml.querySelectorAll("item")
+            );
+
+
+        hospitals =
+            items
+            .map(function(item) {
+
+                const name =
+                    item.querySelector(
+                        "dutyName"
+                    )?.textContent || "병원명 없음";
+
+
+                const phone =
+                    item.querySelector(
+                        "dutyTel3"
+                    )?.textContent
+                    ||
+                    item.querySelector(
+                        "dutyTel1"
+                    )?.textContent
+                    ||
+                    "";
+
+
+                const address =
+                    item.querySelector(
+                        "dutyAddr"
+                    )?.textContent || "";
+
+
+                const lat =
+                    Number(
+                        item.querySelector(
+                            "latitude"
+                        )?.textContent
+                    );
+
+
+                const lon =
+                    Number(
+                        item.querySelector(
+                            "longitude"
+                        )?.textContent
+                    );
+
+
+                const apiDistance =
+                    Number(
+                        item.querySelector(
+                            "distance"
+                        )?.textContent
+                    );
+
+
+                return {
+
+                    name: name,
+
+                    phone: phone,
+
+                    lat: lat,
+
+                    lon: lon,
+
+                    address: address,
+
+                    distance:
+                        Number.isFinite(apiDistance)
+                        ? apiDistance
+                        : calculateDistance(
+                            userLatitude,
+                            userLongitude,
+                            lat,
+                            lon
+                        ),
+
+                    /*
+                      현재 단계에서는 위치 API만 연결합니다.
+
+                      화상/외상/심뇌혈관 적합성은
+                      다음 단계에서 중증질환 수용가능정보 API와
+                      연결해서 판단합니다.
+                    */
+
+                    symptoms: [
+                        "일반"
+                    ],
+
+                    info:
+                        address
+                        +
+                        " / 진료 및 수용 여부 확인 필요"
+
+                };
+
+            })
+
+            .filter(function(hospital) {
+
+                return (
+                    Number.isFinite(
+                        hospital.lat
+                    )
+                    &&
+                    Number.isFinite(
+                        hospital.lon
+                    )
+                );
+
+            })
+
+            .sort(function(a, b) {
+
+                return (
+                    a.distance
+                    -
+                    b.distance
+                );
+
+            });
+
+
+        console.log(
+            "주변 실제 병원:",
+            hospitals
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "병원 데이터 불러오기 실패:",
+            error
+        );
+
+    }
+
+}
 
 
 /* ==============================
@@ -648,65 +750,28 @@ function selectSymptom(
 
     document
         .querySelectorAll(".symptom")
-        .forEach(
-            function(btn) {
+        .forEach(function(btn) {
 
-                btn.classList.remove(
-                    "active"
-                );
+            btn.classList.remove(
+                "active"
+            );
 
-            }
-        );
+        });
 
     button.classList.add(
         "active"
     );
 
-    const filteredHospitals =
 
-        hospitals
-        .filter(
-            function(hospital) {
+    let filteredHospitals = [];
 
-                return hospital
-                    .symptoms
-                    .includes(
-                        symptom
-                    );
 
-            }
-        )
+    if (symptom === "일반") {
 
-        .map(
-            function(hospital) {
-
-                if (
-                    userLatitude !== null &&
-                    userLongitude !== null
-                ) {
-
-                    hospital.distance =
-                        calculateDistance(
-                            userLatitude,
-                            userLongitude,
-                            hospital.lat,
-                            hospital.lon
-                        );
-
-                } else {
-
-                    hospital.distance =
-                        9999;
-
-                }
-
-                return hospital;
-
-            }
-        )
-
-        .sort(
-            function(a, b) {
+        filteredHospitals =
+            hospitals
+            .slice()
+            .sort(function(a, b) {
 
                 return (
                     a.distance
@@ -714,8 +779,14 @@ function selectSymptom(
                     b.distance
                 );
 
-            }
-        );
+            });
+
+    } else {
+
+        filteredHospitals = [];
+
+    }
+
 
     showHospitals(
         filteredHospitals,
@@ -742,7 +813,26 @@ function showHospitals(
 
 
     list.innerHTML = "";
+if (hospitals.length === 0) {
 
+    if (symptom === "일반") {
+
+        list.innerHTML =
+            '<div class="empty">' +
+            '주변 응급의료기관 정보를 불러오지 못했거나 검색 결과가 없습니다.' +
+            '</div>';
+
+    } else {
+
+        list.innerHTML =
+            '<div class="empty">' +
+            '이 증상은 아직 중증질환 수용가능정보 API 연결 전입니다.' +
+            '</div>';
+
+    }
+
+    return;
+}
 
     hospitals.forEach(
         function(hospital) {
