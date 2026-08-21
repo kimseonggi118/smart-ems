@@ -583,6 +583,77 @@
         grid-template-columns: 1fr 1fr;
     }
 }
+/* =========================
+   환자 정보 / 바이탈 입력
+========================= */
+
+.vital-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.vital-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.vital-field label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #555;
+}
+
+.vital-field input,
+.vital-field select {
+    width: 100%;
+    border: 1px solid #ccd3dc;
+    border-radius: 9px;
+    padding: 12px 10px;
+    font-size: 16px;
+    background: white;
+}
+
+.vital-field input:focus,
+.vital-field select:focus {
+    outline: none;
+    border: 2px solid #1565c0;
+}
+
+.vital-wide {
+    grid-column: 1 / 3;
+}
+
+.patient-evaluate-btn {
+    width: 100%;
+    margin-top: 14px;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #0c3b73;
+    color: white;
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.patient-evaluate-btn:active {
+    transform: scale(0.99);
+}
+
+@media (min-width: 700px) {
+
+    .vital-grid {
+        grid-template-columns:
+            repeat(5, 1fr);
+    }
+
+    .vital-wide {
+        grid-column: auto;
+    }
+
+}        
     </style>
 </head>
 
@@ -739,7 +810,117 @@ if ("serviceWorker" in navigator) {
 </div>
 
 
-<!-- 환자 상태 평가 -->
+<!-- 환자 정보 및 바이탈 입력 -->
+
+<div class="patient-summary-card">
+
+    <div class="title">
+        2. 환자 정보 및 바이탈
+    </div>
+
+    <div class="vital-grid">
+
+        <div class="vital-field">
+            <label>나이</label>
+            <input
+                type="number"
+                id="patientAge"
+                inputmode="numeric"
+                placeholder="예: 35"
+                min="0"
+                max="120"
+            >
+        </div>
+
+        <div class="vital-field">
+            <label>성별</label>
+
+            <select id="patientSex">
+                <option value="">선택</option>
+                <option value="남">남</option>
+                <option value="여">여</option>
+            </select>
+        </div>
+
+        <div class="vital-field vital-wide">
+
+            <label>의식 상태</label>
+
+            <select id="patientConsciousness">
+                <option value="">선택</option>
+                <option value="A">A - 명료</option>
+                <option value="V">V - 음성 반응</option>
+                <option value="P">P - 통증 반응</option>
+                <option value="U">U - 무반응</option>
+            </select>
+
+        </div>
+
+        <div class="vital-field">
+            <label>수축기 BP</label>
+            <input
+                type="number"
+                id="sbp"
+                inputmode="numeric"
+                placeholder="예: 120"
+            >
+        </div>
+
+        <div class="vital-field">
+            <label>이완기 BP</label>
+            <input
+                type="number"
+                id="dbp"
+                inputmode="numeric"
+                placeholder="예: 80"
+            >
+        </div>
+
+        <div class="vital-field">
+            <label>HR /min</label>
+            <input
+                type="number"
+                id="heartRate"
+                inputmode="numeric"
+                placeholder="예: 80"
+            >
+        </div>
+
+        <div class="vital-field">
+            <label>SpO₂ %</label>
+            <input
+                type="number"
+                id="spo2"
+                inputmode="numeric"
+                placeholder="예: 98"
+                min="0"
+                max="100"
+            >
+        </div>
+
+        <div class="vital-field">
+            <label>RR /min</label>
+            <input
+                type="number"
+                id="respRate"
+                inputmode="numeric"
+                placeholder="예: 18"
+            >
+        </div>
+
+    </div>
+
+    <button
+        class="patient-evaluate-btn"
+        onclick="evaluatePatient()"
+    >
+        🚑 환자 상태 입력 완료
+    </button>
+
+</div>
+
+
+<!-- 환자 상태 평가 결과 -->
 
 <div class="risk-card">
 
@@ -751,9 +932,12 @@ if ("serviceWorker" in navigator) {
                 🚨 환자 상태 평가
             </div>
 
-            <div class="risk-badge-sub" id="riskStatus">
-                증상과 바이탈을 입력하면
-                환자 상태를 평가합니다.
+            <div
+                class="risk-badge-sub"
+                id="riskStatus"
+            >
+                바이탈을 입력한 뒤
+                환자 상태 입력 완료를 눌러주세요.
             </div>
 
         </div>
@@ -761,14 +945,11 @@ if ("serviceWorker" in navigator) {
         <div class="risk-summary">
 
             <div class="risk-summary-title">
-                자동 중증도 판단 결과
+                입력된 환자 정보
             </div>
 
-            <div>
-                현재 단계에서는
-                <span class="risk-summary-score">
-                    중증도 계산 준비 중
-                </span>
+            <div id="patientResult">
+                아직 입력되지 않았습니다.
             </div>
 
         </div>
@@ -776,6 +957,7 @@ if ("serviceWorker" in navigator) {
     </div>
 
 </div>
+    
 <!-- 입력 요약 -->
 
 <div class="patient-summary-card">
@@ -805,9 +987,12 @@ if ("serviceWorker" in navigator) {
                 👤 의식 상태
             </div>
 
-            <div class="summary-value">
-                입력 기능 연결 예정
-            </div>
+            <div
+    class="summary-value"
+    id="summaryConsciousness"
+>
+    미입력
+</div>
 
         </div>
 
@@ -818,12 +1003,12 @@ if ("serviceWorker" in navigator) {
                 ❤️ 바이탈 요약
             </div>
 
-            <div class="summary-value">
-                BP / HR / SpO₂ / RR
-                <br>
-                입력 기능 연결 예정
-            </div>
-
+   <div
+    class="summary-value"
+    id="summaryVitals"
+>
+    미입력
+</div>         
         </div>
 
 
@@ -1315,6 +1500,137 @@ function changeHospitalTab(tab) {
     }
 
 }
+/* =========================
+   환자 정보 / 바이탈 입력 처리
+========================= */
+
+function evaluatePatient() {
+
+    const age =
+        document.getElementById("patientAge").value;
+
+    const sex =
+        document.getElementById("patientSex").value;
+
+    const consciousness =
+        document.getElementById("patientConsciousness").value;
+
+    const sbp =
+        document.getElementById("sbp").value;
+
+    const dbp =
+        document.getElementById("dbp").value;
+
+    const hr =
+        document.getElementById("heartRate").value;
+
+    const spo2 =
+        document.getElementById("spo2").value;
+
+    const rr =
+        document.getElementById("respRate").value;
+
+
+    /* 필수 입력 확인 */
+    if (
+        !consciousness ||
+        !sbp ||
+        !dbp ||
+        !hr ||
+        !spo2 ||
+        !rr
+    ) {
+
+        alert(
+            "의식 상태와 BP, HR, SpO₂, RR을 모두 입력해주세요."
+        );
+
+        return;
+    }
+
+
+    /* 입력 결과 표시 */
+    const result =
+        document.getElementById("patientResult");
+
+    if (result) {
+
+        result.innerHTML =
+            "👤 "
+            + (age ? age + "세" : "나이 미입력")
+            + " / "
+            + (sex || "성별 미입력")
+            + "<br>"
+            + "🧠 의식: "
+            + consciousness
+            + "<br>"
+            + "❤️ BP "
+            + sbp
+            + "/"
+            + dbp
+            + " | HR "
+            + hr
+            + "<br>"
+            + "🫁 SpO₂ "
+            + spo2
+            + "% | RR "
+            + rr;
+
+    }
+
+
+    /* 환자 상태 영역 표시 */
+    const riskStatus =
+        document.getElementById("riskStatus");
+
+    if (riskStatus) {
+
+        riskStatus.innerHTML =
+            "✅ 환자 정보 입력 완료"
+            + "<br>"
+            + "중증도 판단 기준 연결 준비 완료";
+
+    }
+
+
+    /* 아래 입력 요약에도 반영 */
+    const consciousnessSummary =
+        document.getElementById(
+            "summaryConsciousness"
+        );
+
+    const vitalSummary =
+        document.getElementById(
+            "summaryVitals"
+        );
+
+
+    if (consciousnessSummary) {
+
+        consciousnessSummary.innerText =
+            consciousness;
+
+    }
+
+
+    if (vitalSummary) {
+
+        vitalSummary.innerHTML =
+            "BP "
+            + sbp
+            + "/"
+            + dbp
+            + " | HR "
+            + hr
+            + "<br>"
+            + "SpO₂ "
+            + spo2
+            + "% | RR "
+            + rr;
+
+    }
+
+}    
 function selectSymptom(
     symptom,
     button
