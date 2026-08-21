@@ -1374,6 +1374,11 @@ async function loadNearbyHospitals() {
             items
             .map(function(item) {
 
+                const hpid =
+    item.querySelector(
+        "hpid"
+    )?.textContent.trim() || "";
+                
                 const name =
                     item.querySelector(
                         "dutyName"
@@ -1423,7 +1428,8 @@ async function loadNearbyHospitals() {
 
 
                 return {
-
+hpid: hpid,
+                    
                     name: name,
 
                     phone: phone,
@@ -1433,6 +1439,11 @@ async function loadNearbyHospitals() {
                     lon: lon,
 
                     address: address,
+
+                    capabilities:
+    hospitalCapabilities[hpid]
+        ? hospitalCapabilities[hpid].capabilities
+        : null,
 
                     distance:
                         Number.isFinite(apiDistance)
