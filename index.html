@@ -739,44 +739,51 @@ if ("serviceWorker" in navigator) {
 
     </div>
 
-    <div class="symptom-grid">
+<div class="symptom-grid">
 
-        <button
-            class="symptom"
-            onclick="selectSymptom('화상', this)">
+    <button
+        class="symptom"
+        onclick="selectSymptom('화상', this)">
+        🔥 중증 화상
+    </button>
 
-            🔥 중증 화상
+    <button
+        class="symptom"
+        onclick="selectSymptom('외상', this)">
+        💥 중증 외상
+    </button>
 
-        </button>
+    <button
+        class="symptom"
+        onclick="selectSymptom('심혈관', this)">
+        🫀 심혈관
+    </button>
 
+    <button
+        class="symptom"
+        onclick="selectSymptom('뇌혈관', this)">
+        🧠 뇌혈관
+    </button>
 
-        <button
-            class="symptom"
-            onclick="selectSymptom('외상', this)">
+    <button
+        class="symptom"
+        onclick="selectSymptom('일반', this)">
+        🏥 일반 응급
+    </button>
 
-            💥 중증 외상
+    <button
+        class="symptom"
+        onclick="selectSymptom('화학', this)">
+        ☣️ 유해화학물질
+    </button>
 
-        </button>
+    <button
+        class="symptom"
+        onclick="selectSymptom('방사선', this)">
+        ☢️ 방사선
+    </button>
 
-
-        <button
-            class="symptom"
-            onclick="selectSymptom('심뇌', this)">
-
-            🧠 심·뇌혈관
-
-        </button>
-
-
-        <button
-            class="symptom"
-            onclick="selectSymptom('일반', this)">
-
-            🏥 일반 응급
-
-        </button>
-
-    </div>
+</div>
 
 </div>
 
@@ -1496,6 +1503,186 @@ function changeHospitalTab(tab) {
 /* =========================
    환자 정보 / 바이탈 입력 처리
 ========================= */
+/* =========================
+   환자 상태 FLAG 생성
+========================= */
+
+function buildPatientFlags() {
+
+    const sbp =
+        Number(document.getElementById("sbp").value);
+
+    const hr =
+        Number(document.getElementById("heartRate").value);
+
+    const spo2 =
+        Number(document.getElementById("spo2").value);
+
+    const rr =
+        Number(document.getElementById("respRate").value);
+
+    const consciousness =
+        document.getElementById("patientConsciousness").value;
+
+
+    const flags = {
+        hemodynamicUnstable: false,
+        hypoxia: false,
+        respiratoryAbnormal: false,
+        alteredMentalStatus: false,
+        severePhysiologicInstability: false
+    };
+
+
+    /* 프로토타입 기준 - 추후 공식 기준 검토 후 확정 */
+
+    if (sbp < 90 || hr < 40 || hr > 130) {
+        flags.hemodynamicUnstable = true;
+    }
+
+    if (spo2 < 94) {
+        flags.hypoxia = true;
+    }
+
+    if (rr < 10 || rr > 24) {
+        flags.respiratoryAbnormal = true;
+    }
+
+    if (
+        consciousness === "V" ||
+        consciousness === "P" ||
+        consciousness === "U"
+    ) {
+        flags.alteredMentalStatus = true;
+    }
+
+
+    const flagCount = [
+        flags.hemodynamicUnstable,
+        flags.hypoxia,
+        flags.respiratoryAbnormal,
+        flags.alteredMentalStatus
+    ].filter(Boolean).length;
+
+
+    if (flagCount >= 2) {
+        flags.severePhysiologicInstability = true;
+    }
+
+
+    return flags;
+}
+
+
+/* =========================
+   환자 유형별 필요 병원 역량
+========================= */
+
+function buildRequiredCapabilities(symptom, flags) {
+
+    const required = [];
+    const preferred = [];
+
+
+    if (symptom === "화상") {
+
+        required.push("화상치료");
+        preferred.push("중환자실");
+
+        if (
+            flags.hypoxia ||
+            flags.respiratoryAbnormal ||
+            flags.alteredMentalStatus
+        ) {
+            required.push("기도관리");
+            preferred.push("인공호흡기");
+        }
+
+        if (flags.hemodynamicUnstable) {
+            preferred.push(
+                "응급수술",
+                "수혈대응",
+                "중환자실"
+            );
+        }
+    }
+
+
+    if (symptom === "외상") {
+
+        required.push("외상진료", "CT");
+        preferred.push("응급수술", "중환자실");
+
+        if (flags.hemodynamicUnstable) {
+            required.push("응급수술");
+            preferred.push("대량수혈", "외상센터");
+        }
+    }
+
+
+    if (symptom === "심혈관") {
+
+        required.push("심혈관응급진료");
+        preferred.push("PCI", "CCU");
+
+        if (flags.hemodynamicUnstable) {
+            preferred.push("ECMO", "중환자실");
+        }
+    }
+
+
+    if (symptom === "뇌혈관") {
+
+        required.push("CT", "뇌졸중진료");
+        preferred.push(
+            "뇌혈관중재",
+            "신경외과",
+            "중환자실"
+        );
+    }
+
+
+    if (symptom === "일반") {
+        required.push("응급진료");
+    }
+
+
+    if (symptom === "화학") {
+
+        required.push("유해화학물질대응");
+        preferred.push("독성학적처치", "제염");
+
+        if (
+            flags.hypoxia ||
+            flags.respiratoryAbnormal
+        ) {
+            required.push("기도관리");
+            preferred.push("중환자실");
+        }
+    }
+
+
+    if (symptom === "방사선") {
+
+        required.push("방사선응급대응");
+        preferred.push(
+            "제염",
+            "혈액학적치료",
+            "화상치료"
+        );
+    }
+
+
+    return {
+        required: [...new Set(required)],
+        preferred: [...new Set(preferred)]
+    };
+}
+
+
+/* =========================
+   환자 정보 / 바이탈 입력 처리
+========================= */
 
 function evaluatePatient() {
 
@@ -1545,7 +1732,14 @@ const supplementalOxygen =
 
         return;
     }
+const patientFlags =
+    buildPatientFlags();
 
+const capabilities =
+    buildRequiredCapabilities(
+        selectedSymptom,
+        patientFlags
+    );
 
     /* 입력 결과 표시 */
     const result =
@@ -1588,11 +1782,54 @@ const supplementalOxygen =
 
     if (riskStatus) {
 
-        riskStatus.innerHTML =
-            "✅ 환자 정보 입력 완료"
-            + "<br>"
-            + "중증도 판단 기준 연결 준비 완료";
+   const flagLabels = [];
 
+if (patientFlags.hemodynamicUnstable) {
+    flagLabels.push("🔴 혈역학적 불안정 소견");
+}
+
+if (patientFlags.hypoxia) {
+    flagLabels.push("🟠 산소화 이상");
+}
+
+if (patientFlags.respiratoryAbnormal) {
+    flagLabels.push("🟠 호흡 이상");
+}
+
+if (patientFlags.alteredMentalStatus) {
+    flagLabels.push("🔴 의식저하");
+}
+
+if (flagLabels.length === 0) {
+    flagLabels.push("🟢 주요 위험 FLAG 없음");
+}
+
+riskStatus.innerHTML =
+    flagLabels.join("<br>")
+    +
+    "<br><br>"
+    +
+    "<strong>필요 병원 역량</strong>"
+    +
+    "<br>"
+    +
+    "필수: "
+    +
+    (
+        capabilities.required.join(", ")
+        ||
+        "없음"
+    )
+    +
+    "<br>"
+    +
+    "우선: "
+    +
+    (
+        capabilities.preferred.join(", ")
+        ||
+        "없음"
+    );   
     }
 
 
@@ -1725,12 +1962,15 @@ const summarySymptom =
 
 if (summarySymptom) {
 
-    const symptomNames = {
-        "화상": "🔥 중증 화상",
-        "외상": "💥 중증 외상",
-        "심뇌": "🧠 심·뇌혈관",
-        "일반": "🏥 일반 응급"
-    };
+   const symptomNames = {
+    "화상": "🔥 중증 화상",
+    "외상": "💥 중증 외상",
+    "심혈관": "🫀 심혈관",
+    "뇌혈관": "🧠 뇌혈관",
+    "일반": "🏥 일반 응급",
+    "화학": "☣️ 유해화학물질",
+    "방사선": "☢️ 방사선"
+};
 
     summarySymptom.innerText =
         symptomNames[symptom] || symptom;
