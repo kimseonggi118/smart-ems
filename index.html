@@ -882,7 +882,25 @@ if ("serviceWorker" in navigator) {
                 placeholder="예: 18"
             >
         </div>
+<div class="vital-field">
+    <label>체온 °C</label>
+    <input
+        type="number"
+        id="temperature"
+        inputmode="decimal"
+        step="0.1"
+        placeholder="예: 36.5"
+    >
+</div>
 
+<div class="vital-field">
+    <label>산소 투여</label>
+    <select id="supplementalOxygen">
+        <option value="">선택</option>
+        <option value="no">아니오</option>
+        <option value="yes">예</option>
+    </select>
+</div>
     </div>
 
     <button
@@ -1505,7 +1523,12 @@ function evaluatePatient() {
     const rr =
         document.getElementById("respRate").value;
 
+const temperature =
+    document.getElementById("temperature").value;
 
+const supplementalOxygen =
+    document.getElementById("supplementalOxygen").value;
+    
     /* 필수 입력 확인 */
     if (
         !consciousness ||
@@ -1516,9 +1539,9 @@ function evaluatePatient() {
         !rr
     ) {
 
-        alert(
-            "의식 상태와 BP, HR, SpO₂, RR을 모두 입력해주세요."
-        );
+    alert(
+    "의식 상태와 BP, HR, SpO₂, RR, 체온, 산소투여 여부를 모두 입력해주세요."
+);
 
         return;
     }
@@ -1549,8 +1572,13 @@ function evaluatePatient() {
             + "🫁 SpO₂ "
             + spo2
             + "% | RR "
-            + rr;
-
+            + rr
++ "<br>"
++ "🌡 체온 "
++ temperature
++ "°C"
++ " | 산소투여 "
++ (supplementalOxygen === "yes" ? "예" : "아니오");
     }
 
 
@@ -1591,17 +1619,22 @@ function evaluatePatient() {
     if (vitalSummary) {
 
         vitalSummary.innerHTML =
-            "BP "
-            + sbp
-            + "/"
-            + dbp
-            + " | HR "
-            + hr
-            + "<br>"
-            + "SpO₂ "
-            + spo2
-            + "% | RR "
-            + rr;
+    "BP "
+    + sbp
+    + "/"
+    + dbp
+    + " | HR "
+    + hr
+    + "<br>"
+    + "SpO₂ "
+    + spo2
+    + "% | RR "
+    + rr
+    + "<br>"
+    + "체온 "
+    + temperature
+    + "°C | O₂ "
+    + (supplementalOxygen === "yes" ? "투여" : "미투여");
 
     }
 
