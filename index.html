@@ -1577,7 +1577,57 @@ function buildPatientFlags() {
 /* =========================
    환자 유형별 필요 병원 역량
 ========================= */
+/* =====================================
+   환자 유형별 중증질환 API 필드 매핑
+===================================== */
 
+function getSymptomKioskRequirements(symptom) {
+
+    if (symptom === "화상") {
+        return {
+            required: ["MKioskTy19"],
+            label: "중증화상 전문치료"
+        };
+    }
+
+    if (symptom === "심혈관") {
+        return {
+            required: ["MKioskTy1"],
+            label: "심근경색 재관류중재술"
+        };
+    }
+
+    if (symptom === "뇌혈관") {
+        return {
+            anyOf: [
+                "MKioskTy2",
+                "MKioskTy3",
+                "MKioskTy4"
+            ],
+            label: "뇌경색 재관류 / 뇌출혈 수술"
+        };
+    }
+
+    if (symptom === "일반") {
+        return {
+            required: ["MKioskTy28"],
+            label: "응급실 수용"
+        };
+    }
+
+    /*
+       외상 / 유해화학물질 / 방사선은
+       MKiosk 단일 필드로 판단하지 않고,
+       다음 단계에서 실시간 병상·장비·센터정보와
+       결합하여 판단
+    */
+
+    return {
+        required: [],
+        anyOf: [],
+        label: ""
+    };
+}
 function buildRequiredCapabilities(symptom, flags) {
 
     const required = [];
