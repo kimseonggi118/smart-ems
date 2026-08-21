@@ -1217,12 +1217,85 @@ if (summaryLocation) {
 ============================== */
 
 let hospitals = [];
+    let hospitalCapabilities = {};
 
 
 /* =====================================
    공공데이터 API에서 주변 실제 병원 불러오기
 ===================================== */
+/* =====================================
+   병원별 중증질환 치료역량 불러오기
+===================================== */
 
+async function loadHospitalCapabilities(lat, lon) {
+
+    try {
+
+        const url =
+            "https://smart-ems-api.tjdrl118.workers.dev/"
+            + "?lat=" + encodeURIComponent(lat)
+            + "&lon=" + encodeURIComponent(lon)
+            + "&mode=capabilities";
+
+
+        const response =
+            await fetch(url);
+
+
+        if (!response.ok) {
+            throw new Error(
+                "병원 역량 API 호출 실패: "
+                + response.status
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        hospitalCapabilities = {};
+
+
+        data.forEach(function(hospital) {
+
+            if (!hospital.hpid) {
+                return;
+            }
+
+            hospitalCapabilities[hospital.hpid] = {
+                address: hospital.address || "",
+                stage1: hospital.stage1 || "",
+                stage2: hospital.stage2 || "",
+                capabilities:
+                    hospital.capabilities || null
+            };
+
+        });
+
+
+        console.log(
+            "병원 치료역량 로딩 완료:",
+            hospitalCapabilities
+        );
+
+
+        return hospitalCapabilities;
+
+
+    } catch (error) {
+
+        console.error(
+            "병원 치료역량 로딩 오류:",
+            error
+        );
+
+        hospitalCapabilities = {};
+
+        return hospitalCapabilities;
+    }
+
+}
 async function loadNearbyHospitals() {
 
     if (
@@ -1245,6 +1318,10 @@ async function loadNearbyHospitals() {
         const response =
             await fetch(workerUrl);
 
+        await loadHospitalCapabilities(
+    userLatitude,
+    userLongitude
+);
 
         if (!response.ok) {
 
