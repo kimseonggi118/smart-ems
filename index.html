@@ -2204,7 +2204,45 @@ if (summarySymptom) {
             card.className =
                 "recommend-card";
 
+const kiosk =
+    hospital.capabilities || {};
 
+let capabilityText =
+    "⚠️ 진료역량 정보 확인 필요";
+
+let capabilityClass =
+    "capability-unknown";
+
+if (selectedSymptom === "화상") {
+
+    const value =
+        (kiosk.MKioskTy19 || "").trim();
+
+    if (value === "Y") {
+        capabilityText =
+            "✅ 중증화상 전문치료 가능";
+
+        capabilityClass =
+            "capability-ok";
+    }
+    else if (
+        value === "불가능"
+    ) {
+        capabilityText =
+            "❌ 중증화상 전문치료 불가능";
+
+        capabilityClass =
+            "capability-no";
+    }
+    else {
+        capabilityText =
+            "⚠️ 중증화상 진료정보 확인 필요";
+
+        capabilityClass =
+            "capability-unknown";
+    }
+}
+            
             card.innerHTML = `
 
                 <div class="recommend-top">
@@ -2228,6 +2266,9 @@ if (summarySymptom) {
                             <span class="recommend-tag">
                                 E-GEN 공공데이터
                             </span>
+  <span class="recommend-tag ${capabilityClass}">
+        ${capabilityText}
+    </span>
 
                         </div>
 
