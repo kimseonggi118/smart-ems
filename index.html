@@ -1264,12 +1264,19 @@ async function loadHospitalCapabilities(lat, lon) {
             }
 
             hospitalCapabilities[hospital.hpid] = {
-                address: hospital.address || "",
-                stage1: hospital.stage1 || "",
-                stage2: hospital.stage2 || "",
-                capabilities:
-                    hospital.capabilities || null
-            };
+    address: hospital.address || "",
+    stage1: hospital.stage1 || "",
+    stage2: hospital.stage2 || "",
+
+    emergencyClassCode:
+        hospital.emergencyClassCode || "",
+
+    emergencyClassName:
+        hospital.emergencyClassName || "",
+
+    capabilities:
+        hospital.capabilities || null
+};
 
         });
 
@@ -1446,12 +1453,23 @@ hpid: hpid,
                     address: address,
 
                     hospitalType: hospitalType,
+                    
+emergencyClassCode:
+    hospitalCapabilities[hpid]
+        ? hospitalCapabilities[hpid].emergencyClassCode
+        : "",
 
+emergencyClassName:
+    hospitalCapabilities[hpid]
+        ? hospitalCapabilities[hpid].emergencyClassName
+        : "",
+                    
                     capabilities:
     hospitalCapabilities[hpid]
         ? hospitalCapabilities[hpid].capabilities
         : null,
 
+                    
                     distance:
                         Number.isFinite(apiDistance)
                         ? apiDistance
@@ -2269,6 +2287,15 @@ if (selectedSymptom === "화상") {
                             <span class="recommend-tag">
                                 ${hospital.hospitalType}
                             </span>
+                            
+${hospital.emergencyClassName
+    ? `
+        <span class="recommend-tag">
+            ${hospital.emergencyClassName}
+        </span>
+      `
+    : ""
+}
 
                             <span class="recommend-tag">
                                 E-GEN 공공데이터
@@ -2296,7 +2323,7 @@ if (selectedSymptom === "화상") {
 
                 <div class="recommend-body">
 
-                    <div class="reason-box">
+                            <div class="reason-box">
 
                         <div class="box-title">
                             추천 정보
@@ -2353,13 +2380,21 @@ if (selectedSymptom === "화상") {
                             수용 가능성
                         </div>
 
-                        <div class="accept-main">
-                            ❗ 확인 필요
-                        </div>
+                <div class="accept-main">
+    ${
+        capabilityText.includes("가능")
+            ? "🟢 치료역량 확인"
+            : capabilityText.includes("불가능")
+                ? "🔴 치료역량 부적합"
+                : "🟡 수용상태 확인 필요"
+    }
+</div>
 
-                        <div class="arrival-sub">
-                            병원 전화 확인 권장
-                        </div>
+<div class="arrival-sub">
+    ${capabilityText}
+    <br>
+    실제 병상 및 수용 가능 여부는 병원 확인 필요
+</div>
 
                     </div>
 
