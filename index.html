@@ -1274,6 +1274,9 @@ async function loadHospitalCapabilities(lat, lon) {
     emergencyClassName:
         hospital.emergencyClassName || "",
 
+                realtime:
+        hospital.realtime || null,
+
     capabilities:
         hospital.capabilities || null
 };
@@ -1463,6 +1466,11 @@ emergencyClassName:
     hospitalCapabilities[hpid]
         ? hospitalCapabilities[hpid].emergencyClassName
         : "",
+
+realtime:
+    hospitalCapabilities[hpid]
+        ? hospitalCapabilities[hpid].realtime
+        : null,
                     
                     capabilities:
     hospitalCapabilities[hpid]
