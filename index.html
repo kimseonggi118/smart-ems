@@ -1402,6 +1402,11 @@ async function loadNearbyHospitals() {
                         "dutyAddr"
                     )?.textContent || "";
 
+                const hospitalType =
+    item.querySelector(
+        "dutyDivName"
+    )?.textContent.trim() || "의료기관";
+
 
                 const lat =
                     Number(
@@ -1439,6 +1444,8 @@ hpid: hpid,
                     lon: lon,
 
                     address: address,
+
+                    hospitalType: hospitalType,
 
                     capabilities:
     hospitalCapabilities[hpid]
@@ -2260,7 +2267,7 @@ if (selectedSymptom === "화상") {
                         <div class="recommend-tags">
 
                             <span class="recommend-tag">
-                                응급의료기관
+                                ${hospital.hospitalType}
                             </span>
 
                             <span class="recommend-tag">
