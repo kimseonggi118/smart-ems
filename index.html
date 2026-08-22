@@ -2240,6 +2240,63 @@ if (summarySymptom) {
 const kiosk =
     hospital.capabilities || {};
 
+            const realtime =
+    hospital.realtime || {};
+
+const emergencyBeds =
+    realtime.emergencyBeds ?? null;
+
+const ecmo =
+    realtime.ecmo ?? null;
+
+const hyperbaricOxygen =
+    realtime.hyperbaricOxygen ?? null;
+
+const burnICU =
+    realtime.burnICU ?? null;
+
+const traumaICU =
+    realtime.traumaICU ?? null;
+
+const traumaOR =
+    realtime.traumaOR ?? null;
+
+const realtimeUpdatedAt =
+    const emergencyBedsText =
+    emergencyBeds !== null
+        ? `🛏 응급실 가용병상 ${emergencyBeds}`
+        : "🛏 응급실 병상 정보 확인 필요";
+
+const ecmoText =
+    ecmo === "Y"
+        ? "🫀 ECMO 가용"
+        : ecmo
+            ? "🫀 ECMO 현재 가용 아님"
+            : "🫀 ECMO 정보 확인 필요";
+
+const hyperbaricText =
+    hyperbaricOxygen === "Y"
+        ? "🫧 고압산소치료 가용"
+        : hyperbaricOxygen
+            ? "🫧 고압산소치료 현재 가용 아님"
+            : "🫧 고압산소치료 정보 확인 필요";
+
+const burnICUText =
+    burnICU !== null
+        ? `🔥 화상 ICU ${burnICU}`
+        : "🔥 화상 ICU 정보 확인 필요";
+
+const traumaICUText =
+    traumaICU !== null
+        ? `🚑 외상 ICU ${traumaICU}`
+        : "🚑 외상 ICU 정보 확인 필요";
+
+const traumaORText =
+    traumaOR !== null
+        ? `🏥 외상전용 수술실 ${traumaOR}`
+        : "🏥 외상전용 수술실 정보 확인 필요";
+    realtime.updatedAt ?? null;
+            
 let capabilityText =
     "⚠️ 진료역량 정보 확인 필요";
 
@@ -2337,24 +2394,47 @@ ${hospital.emergencyClassName
                             추천 정보
                         </div>
 
-                        <div
-                            style="
-                                font-size:12px;
-                                line-height:1.7;
-                            "
-                        >
+                       <div
+    style="
+        font-size:12px;
+        line-height:1.8;
+    "
+>
+    🏥 의료기관 분류 :
+    ${hospital.emergencyClassName || "분류정보 확인 필요"}
 
-                            ✅ 현재 위치 기준 주변 응급의료기관
+    <br>
 
-                            <br>
+    📍 직선거리 약 ${distance} km
 
-                            ✅ 직선거리 약 ${distance} km
+    <br>
 
-                            <br>
+    ${capabilityText}
 
-                            ⚠️ ${symptom} 환자 수용 가능 여부 확인 필요
+    <br>
 
-                        </div>
+    ${emergencyBedsText}
+
+    <br>
+
+    ${ecmoText}
+
+    <br>
+
+    ${hyperbaricText}
+
+    <br>
+
+    ${burnICUText}
+
+    <br>
+
+    ${traumaICUText}
+
+    <br>
+
+    ${traumaORText}
+</div>
 
                     </div>
 
