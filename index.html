@@ -2476,25 +2476,35 @@ ${hospital.emergencyClassName
         ${distance} km
     </div>
 
-    <div class="arrival-sub">
-        📍 GPS 직선거리
-        <br>
+    <div class="arrival-main">
+    ${
+        tmapRoadDistanceKm !== null
+            ? `${tmapRoadDistanceKm} km`
+            : `${distance} km`
+    }
+</div>
 
-        ${
-            tmapMinutes !== null
-                ? `🚑 예상 이동시간 약 ${tmapMinutes}분`
-                : "🚑 예상 이동시간 확인 필요"
-        }
+<div class="arrival-sub">
 
-        <br>
+    ${
+        tmapRoadDistanceKm !== null
+            ? `🛣 실제 이송거리`
+            : `📍 GPS 직선거리`
+    }
 
-        ${
-            tmapRoadDistanceKm !== null
-                ? `🛣 도로거리 약 ${tmapRoadDistanceKm} km`
-                : "🛣 도로거리 확인 필요"
-        }
-    </div>
+    <br>
 
+    ${
+        tmapMinutes !== null
+            ? `🚑 예상 이동시간 약 ${tmapMinutes}분`
+            : "🚑 예상 이동시간 확인 필요"
+    }
+
+    <br>
+
+    📍 직선거리 ${distance} km
+
+</div>
 </div>
                     <div class="accept-box">
 
