@@ -2251,6 +2251,20 @@ const kiosk =
             const realtime =
     hospital.realtime || {};
 
+const tmap =
+    hospital.tmap || {};
+
+const tmapMinutes =
+    tmap.durationMinutes ?? null;
+
+const tmapRoadDistanceMeters =
+    tmap.roadDistanceMeters ?? null;
+
+const tmapRoadDistanceKm =
+    Number.isFinite(Number(tmapRoadDistanceMeters))
+        ? (Number(tmapRoadDistanceMeters) / 1000).toFixed(1)
+        : null;            
+
 const emergencyBeds =
     realtime.emergencyBeds ?? null;
 
@@ -2449,26 +2463,39 @@ ${hospital.emergencyClassName
                     </div>
 
 
-                    <div class="arrival-box">
+                   <div class="arrival-box">
 
-                        <div
-                            class="box-title"
-                            style="color:#d72626;"
-                        >
-                            현재 거리
-                        </div>
+    <div
+        class="box-title"
+        style="color:#d72626;"
+    >
+        이송 거리 / 시간
+    </div>
 
-                        <div class="arrival-main">
-                            ${distance} km
-                        </div>
+    <div class="arrival-main">
+        ${distance} km
+    </div>
 
-                        <div class="arrival-sub">
-                            GPS 기준 직선거리
-                        </div>
+    <div class="arrival-sub">
+        📍 GPS 직선거리
+        <br>
 
-                    </div>
+        ${
+            tmapMinutes !== null
+                ? `🚑 예상 이동시간 약 ${tmapMinutes}분`
+                : "🚑 예상 이동시간 확인 필요"
+        }
 
+        <br>
 
+        ${
+            tmapRoadDistanceKm !== null
+                ? `🛣 도로거리 약 ${tmapRoadDistanceKm} km`
+                : "🛣 도로거리 확인 필요"
+        }
+    </div>
+
+</div>
                     <div class="accept-box">
 
                         <div
