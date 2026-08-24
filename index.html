@@ -1277,6 +1277,9 @@ async function loadHospitalCapabilities(lat, lon) {
                 realtime:
         hospital.realtime || null,
 
+                  tmap:
+        hospital.tmap || null,
+
     capabilities:
         hospital.capabilities || null
 };
@@ -1470,6 +1473,11 @@ emergencyClassName:
 realtime:
     hospitalCapabilities[hpid]
         ? hospitalCapabilities[hpid].realtime
+        : null,
+
+tmap:
+    hospitalCapabilities[hpid]
+        ? hospitalCapabilities[hpid].tmap
         : null,
                     
                     capabilities:
