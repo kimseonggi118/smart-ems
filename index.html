@@ -2414,92 +2414,251 @@ if (selectedSymptom === "화상") {
             
 const confirmedInfo = [];
 
-/* 선택 증상에 대한 치료역량이 확인된 경우 */
-if (capabilityClass === "capability-ok") {
-    confirmedInfo.push(
-        capabilityText
-            .replace("✅ ", "")
+
+/* =====================================
+   추천정보 추가 함수
+   related=true → 현재 선택 증상 관련 정보
+===================================== */
+
+function addConfirmedInfo(text, related) {
+
+    confirmedInfo.push({
+        text: text,
+        related: related === true
+    });
+
+}
+
+
+/* =====================================
+   중앙응급의료센터 중증질환 수용정보
+===================================== */
+
+
+/* 심근경색 재관류중재술 */
+if (
+    (kiosk.MKioskTy1 || "").trim() === "Y"
+) {
+
+    addConfirmedInfo(
+        "심근경색 재관류중재술 가능",
+        selectedSymptom === "심혈관"
     );
+
 }
 
-/* ECMO */
+
+/* 뇌경색 재관류중재술 - 파란 표시 */
+if (
+    (kiosk.MKioskTy2 || "").trim() === "Y"
+) {
+
+    addConfirmedInfo(
+        "뇌경색 재관류중재술 가능",
+        selectedSymptom === "뇌혈관"
+    );
+
+}
+
+
+/* 뇌출혈수술 - 거미막하출혈 */
+if (
+    (kiosk.MKioskTy3 || "").trim() === "Y"
+) {
+
+    addConfirmedInfo(
+        "뇌출혈수술(거미막하출혈) 가능",
+        selectedSymptom === "뇌혈관"
+    );
+
+}
+
+
+/* 뇌출혈수술 - 거미막하출혈 외 - 파란 표시 */
+if (
+    (kiosk.MKioskTy4 || "").trim() === "Y"
+) {
+
+    addConfirmedInfo(
+        "뇌출혈수술(거미막하출혈 외) 가능",
+        selectedSymptom === "뇌혈관"
+    );
+
+}
+
+
+/* 대동맥응급 흉부 - 파란 표시 */
+if (
+    (kiosk.MKioskTy5 || "").trim() === "Y"
+) {
+
+    addConfirmedInfo(
+        "대동맥응급(흉부) 가능",
+        selectedSymptom === "심혈관"
+    );
+
+}
+
+
+/* 대동맥응급 복부 - 파란 표시 */
+if (
+    (kiosk.MKioskTy6 || "").trim() === "Y"
+) {
+
+    addConfirmedInfo(
+        "대동맥응급(복부) 가능",
+        selectedSymptom === "심혈관"
+    );
+
+}
+
+
+/* 중증화상 전문치료 - 파란 표시 */
+if (
+    (kiosk.MKioskTy19 || "").trim() === "Y"
+) {
+
+    addConfirmedInfo(
+        "중증화상 전문치료 가능",
+        selectedSymptom === "화상"
+    );
+
+}
+
+
+/* 정신과적 응급 폐쇄병동입원 - 파란 표시 */
+if (
+    (kiosk.MKioskTy24 || "").trim() === "Y"
+) {
+
+    addConfirmedInfo(
+        "정신과적 응급입원 가능",
+        selectedSymptom === "일반"
+    );
+
+}
+
+
+/* 안과적 응급수술 - 파란 표시 */
+if (
+    (kiosk.MKioskTy25 || "").trim() === "Y"
+) {
+
+    addConfirmedInfo(
+        "안과적 응급수술 가능",
+        selectedSymptom === "일반"
+    );
+
+}
+
+
+/* =====================================
+   실시간 병상 / 장비 정보
+===================================== */
+
+
+/* ECMO - 파란 표시 */
 if (ecmo === "Y") {
-    confirmedInfo.push("ECMO 가용");
+
+    addConfirmedInfo(
+        "ECMO 가용",
+        selectedSymptom === "심혈관"
+    );
+
 }
 
-/* 고압산소치료 */
+
+/* 고압산소치료기 - 파란 표시 */
 if (hyperbaricOxygen === "Y") {
-    confirmedInfo.push("고압산소치료 가용");
+
+    addConfirmedInfo(
+        "고압산소치료 가능",
+        selectedSymptom === "화상" ||
+        selectedSymptom === "화학"
+    );
+
 }
+
 
 /* 화상 ICU */
 if (
     burnICU !== null &&
     Number(burnICU) > 0
 ) {
-    confirmedInfo.push(
-        `화상 ICU ${burnICU}`
+
+    addConfirmedInfo(
+        `화상 ICU ${burnICU}`,
+        selectedSymptom === "화상"
     );
+
 }
+
 
 /* 외상 ICU */
 if (
     traumaICU !== null &&
     Number(traumaICU) > 0
 ) {
-    confirmedInfo.push(
-        `외상 ICU ${traumaICU}`
+
+    addConfirmedInfo(
+        `외상 ICU ${traumaICU}`,
+        selectedSymptom === "외상"
     );
+
 }
+
 
 /* 외상전용 수술실 */
 if (
     traumaOR !== null &&
     Number(traumaOR) > 0
 ) {
-    confirmedInfo.push(
-        `외상전용 수술실 ${traumaOR}`
+
+    addConfirmedInfo(
+        `외상전용 수술실 ${traumaOR}`,
+        selectedSymptom === "외상"
     );
+
 }
+
+
+/* 선택 증상 관련 정보를 맨 위로 정렬 */
+confirmedInfo.sort(function(a, b) {
+
+    return Number(b.related) - Number(a.related);
+
+});
+
 card.innerHTML = `
-                <div class="recommend-top">
 
-                    <div class="rank-badge ${rankClass}">
-                        ${rank}
-                    </div>
+    <div class="recommend-top">
 
-                    <div class="recommend-main">
+        <div class="rank-badge ${rankClass}">
+            ${rank}
+        </div>
 
-                        <div class="recommend-name">
-                            ${hospitalName}
-                        </div>
+        <div class="recommend-main">
 
-                       <div class="recommend-tags">
+            <div class="recommend-name">
+                ${hospitalName}
+            </div>
 
-    ${
-        hospital.emergencyClassName
-            ? `
-                <span class="recommend-tag">
-                    ${hospital.emergencyClassName}
-                </span>
-              `
-            : ""
-    }
+            <div class="recommend-tags">
 
-    ${
-        capabilityClass === "capability-ok"
-            ? `
-                <span class="recommend-tag capability-ok">
-                    ${capabilityText.replace("✅ ", "")}
-                </span>
-              `
-            : ""
-    }
-
+                ${
+                    hospital.emergencyClassName
+                        ? `
+                            <span class="recommend-tag">
+                                ${hospital.emergencyClassName}
+                            </span>
+                          `
+                        : ""
+                }
+           
+        </div>
+            
 </div>
-
-                    </div>
-
+        
                     <div class="recommend-score">
 
                         ${
@@ -2560,8 +2719,13 @@ card.innerHTML = `
                                 ✓
                             </span>
 
-                            <span>
-                                ${info}
+                      <span
+    style="
+        font-weight:${info.related ? "900" : "500"};
+        color:${info.related ? "#111" : "#444"};
+    "
+>
+                               ${info.text}
                             </span>
 
                         </div>
