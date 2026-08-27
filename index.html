@@ -2574,24 +2574,65 @@ ${hospital.emergencyClassName
                     "
                 >
 
-                    📍 ${address}
+                   <div
+    style="
+        font-weight:700;
+        font-size:13px;
+        margin-bottom:8px;
+    "
+>
+    📢 응급실 메시지
+</div>
 
-                    <br>
+${
+    hospital.emergencyMessages &&
+    hospital.emergencyMessages.length > 0
 
-                    📞 ${phone || "전화번호 정보 없음"}
+        ? hospital.emergencyMessages
+            .map(function(message) {
 
-                    <br>
+                return `
+                    <div
+                        style="
+                            padding:8px 0;
+                            border-bottom:1px solid #e5e7eb;
+                        "
+                    >
+                        ${message.text}
 
-                    🚑 현재 위치에서 약 ${distance} km
+                        ${
+                            message.date
+                                ? `
+                                    <div
+                                        style="
+                                            margin-top:3px;
+                                            font-size:11px;
+                                            color:#777;
+                                        "
+                                    >
+                                        등록일시 : ${message.date}
+                                    </div>
+                                  `
+                                : ""
+                        }
 
-                    <br>
+                    </div>
+                `;
 
-                    🏥 선택 증상: ${symptom}
+            })
+            .join("")
 
-                    <br>
-
-                    ⚠️ 실제 수용 여부와 병상 상태는
-                    해당 병원에 직접 확인해야 합니다.
+        : `
+            <div
+                style="
+                    color:#777;
+                    padding:6px 0;
+                "
+            >
+                현재 등록된 응급실 메시지가 없습니다.
+            </div>
+          `
+}
 
                 </div>
 
