@@ -1274,6 +1274,9 @@ async function loadHospitalCapabilities(lat, lon) {
     emergencyClassName:
         hospital.emergencyClassName || "",
 
+emergencyInstitutionType:
+hospital.emergencyInstitutionType || "",
+                
 emergencyMessages:
     hospital.emergencyMessages || [],
                 
@@ -1473,6 +1476,11 @@ emergencyClassName:
         ? hospitalCapabilities[hpid].emergencyClassName
         : "",
 
+emergencyInstitutionType:
+hospitalCapabilities[hpid]
+? hospitalCapabilities[hpid].emergencyInstitutionType
+: "",
+                    
 emergencyMessages:
     hospitalCapabilities[hpid]
         ? hospitalCapabilities[hpid].emergencyMessages
@@ -2097,18 +2105,73 @@ if (symptom === "일반") {
 
         });
 
-} else {
+filteredHospitals =
+    hospitals
+    .slice()
+    .sort(function(a, b) {
 
-    filteredHospitals =
-        hospitals
-        .slice()
-        .sort(function(a, b) {
+        /* 중증 외상 추천 */
+        if (symptom === "외상") {
 
-            return a.distance - b.distance;
+            const aTraumaCenter =
+                a.emergencyInstitutionType === "권역외상센터";
 
-        });
+            const bTraumaCenter =
+                b.emergencyInstitutionType === "권역외상센터";
 
-}
+            /* 1순위: 권역외상센터 */
+            if (aTraumaCenter !== bTraumaCenter) {
+                return bTraumaCenter - aTraumaCenter;
+            }
+
+            const aRealtime =
+                a.realtime || {};
+
+            const bRealtime =
+                b.realtime || {};
+
+            const aTraumaICU =
+                Number(aRealtime.traumaICU) > 0;
+
+            const bTraumaICU =
+                Number(bRealtime.traumaICU) > 0;
+
+            /* 2순위: 외상 ICU 가용 */
+            if (aTraumaICU !== bTraumaICU) {
+                return bTraumaICU - aTraumaICU;
+            }
+
+            const aTraumaOR =
+                Number(aRealtime.traumaOR) > 0;
+
+            const bTraumaOR =
+                Number(bRealtime.traumaOR) > 0;
+
+            /* 3순위: 외상전용 수술실 가용 */
+            if (aTraumaOR !== bTraumaOR) {
+                return bTraumaOR - aTraumaOR;
+            }
+
+            const aTime =
+                Number(a.tmap?.durationMinutes);
+
+            const bTime =
+                Number(b.tmap?.durationMinutes);
+
+            /* 4순위: TMAP 예상 이동시간 */
+            if (
+                Number.isFinite(aTime) &&
+                Number.isFinite(bTime) &&
+                aTime !== bTime
+            ) {
+                return aTime - bTime;
+            }
+        }
+
+        /* 그 외에는 거리순 */
+        return a.distance - b.distance;
+
+    });
 
 
     showHospitals(
