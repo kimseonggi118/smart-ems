@@ -1227,15 +1227,16 @@ let hospitals = [];
    병원별 중증질환 치료역량 불러오기
 ===================================== */
 
-async function loadHospitalCapabilities(lat, lon) {
+async function loadHospitalCapabilities(lat, lon, symptom) {
 
     try {
 
-        const url =
-            "https://smart-ems-api.tjdrl118.workers.dev/"
-            + "?lat=" + encodeURIComponent(lat)
-            + "&lon=" + encodeURIComponent(lon)
-            + "&mode=capabilities";
+const url =
+    "https://smart-ems-api.tjdrl118.workers.dev/"
+    + "?lat=" + encodeURIComponent(lat)
+    + "&lon=" + encodeURIComponent(lon)
+    + "&mode=capabilities"
+    + "&symptom=" + encodeURIComponent(symptom || "");
 
 
         const response =
@@ -1337,9 +1338,10 @@ async function loadNearbyHospitals() {
         const response =
             await fetch(workerUrl);
 
-        await loadHospitalCapabilities(
+await loadHospitalCapabilities(
     userLatitude,
-    userLongitude
+    userLongitude,
+    selectedSymptom
 );
 
         if (!response.ok) {
@@ -2071,11 +2073,23 @@ riskStatus.innerHTML =
     }
 
 }    
-function selectSymptom(
+async function selectSymptom(
     symptom,
     button
 ) {
     selectedSymptom = symptom;
+    if (
+    userLatitude !== null &&
+    userLongitude !== null
+) {
+
+    await loadHospitalCapabilities(
+        userLatitude,
+        userLongitude,
+        selectedSymptom
+    );
+
+}
     document
         .querySelectorAll(".symptom")
         .forEach(function(btn) {
