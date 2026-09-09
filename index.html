@@ -2073,23 +2073,12 @@ riskStatus.innerHTML =
     }
 
 }    
-async function selectSymptom(
+function selectSymptom(
     symptom,
     button
 ) {
     selectedSymptom = symptom;
-    if (
-    userLatitude !== null &&
-    userLongitude !== null
-) {
-
-    await loadHospitalCapabilities(
-        userLatitude,
-        userLongitude,
-        selectedSymptom
-    );
-
-}
+   
     document
         .querySelectorAll(".symptom")
         .forEach(function(btn) {
