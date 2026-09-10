@@ -744,25 +744,19 @@ if ("serviceWorker" in navigator) {
     <button
         class="symptom"
         onclick="selectSymptom('화상', this)">
-        🔥 중증 화상
+        🔥 화상
     </button>
 
     <button
         class="symptom"
         onclick="selectSymptom('외상', this)">
-        💥 중증 외상
+        💥 외상
     </button>
 
     <button
         class="symptom"
-        onclick="selectSymptom('심혈관', this)">
-        🫀 심혈관
-    </button>
-
-    <button
-        class="symptom"
-        onclick="selectSymptom('뇌혈관', this)">
-        🧠 뇌혈관
+        onclick="selectSymptom('심뇌혈관', this)">
+        ❤️ 심·뇌혈관
     </button>
 
     <button
@@ -773,14 +767,8 @@ if ("serviceWorker" in navigator) {
 
     <button
         class="symptom"
-        onclick="selectSymptom('화학', this)">
-        ☣️ 유해화학물질
-    </button>
-
-    <button
-        class="symptom"
-        onclick="selectSymptom('방사선', this)">
-        ☢️ 방사선
+        onclick="selectSymptom('화학방사선', this)">
+        ☣️ 화학물질·방사선
     </button>
 
 </div>
@@ -1152,7 +1140,7 @@ function getLocation() {
 
             userLongitude =
                 position.coords.longitude;
-
+lastLoadedCapabilitySymptom = null;
 
             status.innerText =
                 "✅ 현재 위치 확인 완료";
@@ -1738,23 +1726,19 @@ function getSymptomKioskRequirements(symptom) {
         };
     }
 
-    if (symptom === "심혈관") {
-        return {
-            required: ["MKioskTy1"],
-            label: "심근경색 재관류중재술"
-        };
-    }
-
-    if (symptom === "뇌혈관") {
-        return {
-            anyOf: [
-                "MKioskTy2",
-                "MKioskTy3",
-                "MKioskTy4"
-            ],
-            label: "뇌경색 재관류 / 뇌출혈 수술"
-        };
-    }
+if (symptom === "심뇌혈관") {
+    return {
+        anyOf: [
+            "MKioskTy1",
+            "MKioskTy2",
+            "MKioskTy3",
+            "MKioskTy4",
+            "MKioskTy5",
+            "MKioskTy6"
+        ],
+        label: "심·뇌혈관 전문치료"
+    };
+}
 
     if (symptom === "일반") {
         return {
@@ -1818,26 +1802,23 @@ function buildRequiredCapabilities(symptom, flags) {
     }
 
 
-    if (symptom === "심혈관") {
+if (symptom === "심뇌혈관") {
 
-        required.push("심혈관응급진료");
-        preferred.push("PCI", "CCU");
+    required.push("심·뇌혈관 응급진료");
 
-        if (flags.hemodynamicUnstable) {
-            preferred.push("ECMO", "중환자실");
-        }
-    }
+    preferred.push(
+        "심혈관 중재치료",
+        "뇌혈관 전문치료",
+        "중환자실"
+    );
 
-
-    if (symptom === "뇌혈관") {
-
-        required.push("CT", "뇌졸중진료");
+    if (flags.hemodynamicUnstable) {
         preferred.push(
-            "뇌혈관중재",
-            "신경외과",
+            "ECMO",
             "중환자실"
         );
     }
+}
 
 
     if (symptom === "일반") {
@@ -1845,30 +1826,24 @@ function buildRequiredCapabilities(symptom, flags) {
     }
 
 
-    if (symptom === "화학") {
+if (symptom === "화학방사선") {
 
-        required.push("유해화학물질대응");
-        preferred.push("독성학적처치", "제염");
+    required.push("화학물질·방사선 응급대응");
 
-        if (
-            flags.hypoxia ||
-            flags.respiratoryAbnormal
-        ) {
-            required.push("기도관리");
-            preferred.push("중환자실");
-        }
+    preferred.push(
+        "제염",
+        "중환자실"
+    );
+
+    if (
+        flags.hypoxia ||
+        flags.respiratoryAbnormal ||
+        flags.alteredMentalStatus
+    ) {
+        required.push("기도관리");
+        preferred.push("중환자실");
     }
-
-
-    if (symptom === "방사선") {
-
-        required.push("방사선응급대응");
-        preferred.push(
-            "제염",
-            "혈액학적치료",
-            "화상치료"
-        );
-    }
+}
 
 
     return {
@@ -2074,11 +2049,67 @@ riskStatus.innerHTML =
     }
 
 }    
-function selectSymptom(
+    let lastLoadedCapabilitySymptom = null;
+async function selectSymptom(
     symptom,
     button
 ) {
     selectedSymptom = symptom;
+    if (
+    userLatitude !== null &&
+    userLongitude !== null &&
+    lastLoadedCapabilitySymptom !== symptom
+) {
+    await loadHospitalCapabilities(
+        userLatitude,
+        userLongitude,
+        symptom
+    );
+
+    lastLoadedCapabilitySymptom = symptom;
+        hospitals = hospitals.map(function(hospital) {
+
+    const updated =
+        hospitalCapabilities[hospital.hpid];
+
+   if (!updated) {
+    return {
+        ...hospital,
+        emergencyClassCode: "",
+        emergencyClassName: "",
+        emergencyInstitutionType: "",
+        emergencyMessages: [],
+        realtime: null,
+        tmap: null,
+        capabilities: null
+    };
+}
+         return {
+    ...hospital,
+
+    emergencyClassCode:
+        updated.emergencyClassCode || "",
+
+    emergencyClassName:
+        updated.emergencyClassName || "",
+
+    emergencyInstitutionType:
+        updated.emergencyInstitutionType || "",
+
+    emergencyMessages:
+        updated.emergencyMessages || [],
+
+    realtime:
+        updated.realtime || null,
+
+    tmap:
+        updated.tmap || null,
+
+    capabilities:
+        updated.capabilities || null
+};   
+     }); 
+        }
    
     document
         .querySelectorAll(".symptom")
@@ -2171,7 +2202,106 @@ filteredHospitals =
                 return aTime - bTime;
             }
         }
+/* 화상 추천 */
+if (symptom === "화상") {
 
+    const aCapabilities =
+        a.capabilities || {};
+
+    const bCapabilities =
+        b.capabilities || {};
+
+    const aBurn =
+        aCapabilities.MKioskTy19 === "Y";
+
+    const bBurn =
+        bCapabilities.MKioskTy19 === "Y";
+
+    /* 1순위: 중증화상 전문치료 가능 */
+    if (aBurn !== bBurn) {
+        return bBurn - aBurn;
+    }
+
+    const aRealtime =
+        a.realtime || {};
+
+    const bRealtime =
+        b.realtime || {};
+
+    const aBurnICU =
+        Number(aRealtime.burnICU) > 0;
+
+    const bBurnICU =
+        Number(bRealtime.burnICU) > 0;
+
+    /* 2순위: 화상 ICU 가용 */
+    if (aBurnICU !== bBurnICU) {
+        return bBurnICU - aBurnICU;
+    }
+
+    const aTime =
+        Number(a.tmap?.durationMinutes);
+
+    const bTime =
+        Number(b.tmap?.durationMinutes);
+
+    /* 3순위: TMAP 예상 이동시간 */
+    if (
+        Number.isFinite(aTime) &&
+        Number.isFinite(bTime) &&
+        aTime !== bTime
+    ) {
+        return aTime - bTime;
+    }
+}
+        /* 심·뇌혈관 추천 */
+if (symptom === "심뇌혈관") {
+
+    const aCapabilities =
+        a.capabilities || {};
+
+    const bCapabilities =
+        b.capabilities || {};
+
+    const heartBrainFields = [
+        "MKioskTy1",
+        "MKioskTy2",
+        "MKioskTy3",
+        "MKioskTy4",
+        "MKioskTy5",
+        "MKioskTy6"
+    ];
+
+    const aSpecialist =
+        heartBrainFields.some(function(field) {
+            return aCapabilities[field] === "Y";
+        });
+
+    const bSpecialist =
+        heartBrainFields.some(function(field) {
+            return bCapabilities[field] === "Y";
+        });
+
+    /* 1순위: 심·뇌혈관 전문치료 가능 */
+    if (aSpecialist !== bSpecialist) {
+        return bSpecialist - aSpecialist;
+    }
+
+    const aTime =
+        Number(a.tmap?.durationMinutes);
+
+    const bTime =
+        Number(b.tmap?.durationMinutes);
+
+    /* 2순위: TMAP 예상 이동시간 */
+    if (
+        Number.isFinite(aTime) &&
+        Number.isFinite(bTime) &&
+        aTime !== bTime
+    ) {
+        return aTime - bTime;
+    }
+}
         /* 그 외에는 거리순 */
         return a.distance - b.distance;
 
@@ -2209,14 +2339,12 @@ const summarySymptom =
 
 if (summarySymptom) {
 
-   const symptomNames = {
-    "화상": "🔥 중증 화상",
-    "외상": "💥 중증 외상",
-    "심혈관": "🫀 심혈관",
-    "뇌혈관": "🧠 뇌혈관",
+  const symptomNames = {
+    "화상": "🔥 화상",
+    "외상": "💥 외상",
+    "심뇌혈관": "❤️ 심·뇌혈관",
     "일반": "🏥 일반 응급",
-    "화학": "☣️ 유해화학물질",
-    "방사선": "☢️ 방사선"
+    "화학방사선": "☣️ 화학물질·방사선"
 };
 
     summarySymptom.innerText =
@@ -2235,7 +2363,7 @@ if (summarySymptom) {
     }
 
 
-    /* 최대 10개 병원 표시 */
+    /* 최대 5개 병원 표시 */
     const displayHospitals =
         hospitals.slice(0, 5);
 
@@ -2502,7 +2630,7 @@ if (
 
     addConfirmedInfo(
         "심근경색 재관류중재술 가능",
-        selectedSymptom === "심혈관"
+        selectedSymptom === "심뇌혈관"
     );
 
 }
@@ -2515,7 +2643,7 @@ if (
 
     addConfirmedInfo(
         "뇌경색 재관류중재술 가능",
-        selectedSymptom === "뇌혈관"
+        selectedSymptom === "심뇌혈관"
     );
 
 }
@@ -2528,7 +2656,7 @@ if (
 
     addConfirmedInfo(
         "뇌출혈수술(거미막하출혈) 가능",
-        selectedSymptom === "뇌혈관"
+        selectedSymptom === "심뇌혈관"
     );
 
 }
@@ -2541,7 +2669,7 @@ if (
 
     addConfirmedInfo(
         "뇌출혈수술(거미막하출혈 외) 가능",
-        selectedSymptom === "뇌혈관"
+        selectedSymptom === "심뇌혈관"
     );
 
 }
@@ -2554,7 +2682,7 @@ if (
 
     addConfirmedInfo(
         "대동맥응급(흉부) 가능",
-        selectedSymptom === "심혈관"
+        selectedSymptom === "심뇌혈관"
     );
 
 }
@@ -2567,7 +2695,7 @@ if (
 
     addConfirmedInfo(
         "대동맥응급(복부) 가능",
-        selectedSymptom === "심혈관"
+        selectedSymptom === "심뇌혈관"
     );
 
 }
@@ -2622,7 +2750,7 @@ if (ecmo === "Y") {
 
     addConfirmedInfo(
         "ECMO 가용",
-        selectedSymptom === "심혈관"
+        selectedSymptom === "심뇌혈관"
     );
 
 }
@@ -2634,7 +2762,7 @@ if (hyperbaricOxygen === "Y") {
     addConfirmedInfo(
         "고압산소치료 가능",
         selectedSymptom === "화상" ||
-        selectedSymptom === "화학"
+        selectedSymptom === "화학방사선"
     );
 
 }
