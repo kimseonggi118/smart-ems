@@ -1326,11 +1326,26 @@ async function loadNearbyHospitals() {
         const response =
             await fetch(workerUrl);
 
-        await loadHospitalCapabilities(
-    userLatitude,
-    userLongitude,
-    selectedSymptom
-);
+   if (selectedSymptom) {
+
+    await loadHospitalCapabilities(
+        userLatitude,
+        userLongitude,
+        selectedSymptom
+    );
+
+    if (
+        Object.keys(hospitalCapabilities).length > 0
+    ) {
+        lastLoadedCapabilitySymptom =
+            selectedSymptom;
+    }
+
+} else {
+
+    hospitalCapabilities = {};
+
+}
 
         if (!response.ok) {
 
@@ -2055,16 +2070,25 @@ async function selectSymptom(
     button
 ) {
     selectedSymptom = symptom;
+    document
+    .querySelectorAll(".symptom")
+    .forEach(function(btn) {
+        btn.classList.remove("active");
+    });
+
+if (button) {
+    button.classList.add("active");
+}
     if (
     userLatitude !== null &&
     userLongitude !== null &&
     lastLoadedCapabilitySymptom !== symptom
 ) {
-    await loadHospitalCapabilities(
-        userLatitude,
-        userLongitude,
-        symptom
-    );
+await loadHospitalCapabilities(
+    userLatitude,
+    userLongitude,
+    symptom
+);
 
     lastLoadedCapabilitySymptom = symptom;
         hospitals = hospitals.map(function(hospital) {
@@ -2111,21 +2135,6 @@ async function selectSymptom(
      }); 
         }
    
-    document
-        .querySelectorAll(".symptom")
-        .forEach(function(btn) {
-
-            btn.classList.remove(
-                "active"
-            );
-
-        });
-
-    button.classList.add(
-        "active"
-    );
-
-
     let filteredHospitals = [];
 
 
