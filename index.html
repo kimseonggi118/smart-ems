@@ -1338,6 +1338,12 @@ async function loadNearbyHospitals() {
         const response =
             await fetch(workerUrl);
 
+        await loadHospitalCapabilities(
+    userLatitude,
+    userLongitude,
+    selectedSymptom
+);
+
         if (!response.ok) {
 
             throw new Error(
@@ -1558,63 +1564,7 @@ tmap:
             "주변 실제 병원:",
             hospitals
         );
-
-/* 상세정보는 화면을 막지 않고 뒤에서 불러오기 */
-loadHospitalCapabilities(
-    userLatitude,
-    userLongitude,
-    selectedSymptom
-).then(function() {
-
-    hospitals.forEach(function(hospital) {
-
-        const capability =
-            hospitalCapabilities[hospital.hpid];
-
-        if (!capability) {
-            return;
-        }
-
-        hospital.emergencyClassCode =
-            capability.emergencyClassCode || "";
-
-        hospital.emergencyClassName =
-            capability.emergencyClassName || "";
-
-        hospital.emergencyInstitutionType =
-            capability.emergencyInstitutionType || "";
-
-        hospital.emergencyMessages =
-            capability.emergencyMessages || [];
-
-        hospital.realtime =
-            capability.realtime || null;
-
-        hospital.tmap =
-            capability.tmap || null;
-
-        hospital.capabilities =
-            capability.capabilities || null;
-    });
-
-    /* 상세정보 도착 후 현재 화면만 다시 갱신 */
-    if (selectedSymptom) {
-
-        const activeButton =
-            document.querySelector(
-                ".symptom.active"
-            );
-
-        if (activeButton) {
-            selectSymptom(
-                selectedSymptom,
-                activeButton
-            );
-        }
-    }
-
-});
-        
+     
 if (selectedSymptom) {
 
     const activeButton =
