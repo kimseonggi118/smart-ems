@@ -1323,31 +1323,10 @@ async function loadNearbyHospitals() {
             + encodeURIComponent(userLongitude);
 
 
-        const response =
-            await fetch(workerUrl);
+const response =
+    await fetch(workerUrl);
 
-   if (selectedSymptom) {
-
-    await loadHospitalCapabilities(
-        userLatitude,
-        userLongitude,
-        selectedSymptom
-    );
-
-    if (
-        Object.keys(hospitalCapabilities).length > 0
-    ) {
-        lastLoadedCapabilitySymptom =
-            selectedSymptom;
-    }
-
-} else {
-
-    hospitalCapabilities = {};
-
-}
-
-        if (!response.ok) {
+if (!response.ok) {
 
             throw new Error(
                 "병원 API 호출 실패: "
@@ -1564,18 +1543,18 @@ tmap:
 
 
         console.log(
-            "주변 실제 병원:",
-            hospitals
-        );
+    "주변 실제 병원:",
+    hospitals
+);
 
-        if (selectedSymptom) {
-            await selectSymptom(
-                selectedSymptom,
-                document.querySelector(".symptom.active")
-            );
-        }
+if (selectedSymptom) {
+    await selectSymptom(
+        selectedSymptom,
+        document.querySelector(".symptom.active")
+    );
+}
 
-    } catch (error) {
+} catch (error) {
 
         console.error(
             "병원 데이터 불러오기 실패:",
