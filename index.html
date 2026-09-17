@@ -1567,7 +1567,13 @@ tmap:
             "주변 실제 병원:",
             hospitals
         );
-     
+
+        if (selectedSymptom) {
+            await selectSymptom(
+                selectedSymptom,
+                document.querySelector(".symptom.active")
+            );
+        }
 
     } catch (error) {
 
@@ -2073,8 +2079,11 @@ await loadHospitalCapabilities(
     symptom
 );
 
+if (Object.keys(hospitalCapabilities).length > 0) {
     lastLoadedCapabilitySymptom = symptom;
-        hospitals = hospitals.map(function(hospital) {
+}
+
+hospitals = hospitals.map(function(hospital) {
 
     const updated =
         hospitalCapabilities[hospital.hpid];
