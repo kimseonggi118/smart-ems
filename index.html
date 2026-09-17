@@ -2118,10 +2118,13 @@ await loadHospitalCapabilities(
      }); 
         }
    
-    let filteredHospitals = [];
+let filteredHospitals = [];
 
 
-if (symptom === "일반") {
+if (
+    currentHospitalTab === "near" ||
+    symptom === "일반"
+) {
 
     filteredHospitals =
         hospitals
@@ -2131,7 +2134,9 @@ if (symptom === "일반") {
             return a.distance - b.distance;
 
         });
+
 } else {
+    
 filteredHospitals =
     hospitals
     .slice()
