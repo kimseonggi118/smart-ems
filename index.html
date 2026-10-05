@@ -784,11 +784,34 @@ if ("serviceWorker" in navigator) {
 
 <div class="patient-summary-card">
 
-    <div class="title">
-        2. 환자 정보 및 바이탈
-    </div>
+  <div class="title"
+     style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+     ">
+    
+    <span>2. 환자 정보 및 바이탈</span>
 
-    <div class="vital-grid">
+    <button
+        type="button"
+        id="vitalToggleBtn"
+        onclick="toggleVitalSection()"
+        style="
+            border:none;
+            background:transparent;
+            font-size:14px;
+            font-weight:800;
+            color:#1565c0;
+            cursor:pointer;
+        "
+    >
+        접기 ▲
+    </button>
+
+</div>
+
+<div class="vital-grid" id="vitalSection">
 
         <div class="vital-field">
             <label>나이</label>
@@ -1840,6 +1863,32 @@ if (symptom === "화학방사선") {
    환자 정보 / 바이탈 입력 처리
 ========================= */
 
+function toggleVitalSection() {
+
+    const section =
+        document.getElementById("vitalSection");
+
+    const button =
+        document.getElementById("vitalToggleBtn");
+
+    if (!section || !button) {
+        return;
+    }
+
+    if (section.style.display === "none") {
+
+        section.style.display = "";
+        button.innerText = "접기 ▲";
+
+    } else {
+
+        section.style.display = "none";
+        button.innerText = "펼치기 ▼";
+
+    }
+}
+
+    
 function evaluatePatient() {
 
     const age =
@@ -2935,13 +2984,13 @@ ${
         tmapMinutes !== null
 
             ? `
-                <div class="arrival-main">
-                    ⏱ ${tmapMinutes}분
-                </div>
+               <div class="arrival-main">
+    ${tmapMinutes}분
+</div>
 
-                <div class="arrival-sub">
-                    TMAP 실시간 경로 기준
-                </div>
+<div class="arrival-sub">
+    (${tmapRoadDistanceKm ?? "-"} km)
+</div>
               `
 
             : `
@@ -3012,15 +3061,18 @@ ${
                 ${emergencyBeds}/${totalEmergencyBeds}
             </div>
 
-            <div
-                style="
-                    font-size:11px;
-                    color:#666;
-                "
-            >
-                가용병상 ${bedPercent}%
-            </div>
-          `
+          <div
+    style="
+        font-size:18px;
+        font-weight:900;
+        color:${bedStatusColor};
+        margin-bottom:3px;
+    "
+>
+    ${emergencyBeds}/${totalEmergencyBeds}
+</div>
+
+`
 
         : ""
 }
