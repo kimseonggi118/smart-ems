@@ -754,19 +754,19 @@ if ("serviceWorker" in navigator) {
 
     <div
         id="userModeMenu"
-        style="
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 100%;
-            margin-top: 6px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            min-width: 160px;
-            z-index: 1000;
-            overflow: hidden;
-        ">
+style="
+    display: none;
+    position: absolute;
+    right: 0;
+    bottom: 100%;
+    margin-bottom: 6px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    min-width: 160px;
+    z-index: 1000;
+    overflow: hidden;
+">
 
         <button
             type="button"
@@ -3360,6 +3360,41 @@ document.getElementById("userModeButton")
         }
 
     });
+
+
+document.getElementById("hwaseongModeButton")
+    .addEventListener("click", function() {
+
+        userLatitude = 37.2162201;
+        userLongitude = 127.0711880;
+
+        lastLoadedCapabilitySymptom = null;
+
+        document.getElementById("locationStatus")
+            .innerText =
+            "🏢 화성소방대 고정 위치";
+
+        document.getElementById("locationDetail")
+            .innerText =
+            "위도 37.21622 / 경도 127.07119";
+
+        const summaryLocation =
+            document.getElementById("summaryLocation");
+
+        if (summaryLocation) {
+
+            summaryLocation.innerText =
+                "37.21622, 127.07119";
+
+        }
+
+        document.getElementById("userModeMenu")
+            .style.display = "none";
+
+        loadNearbyHospitals();
+
+    });
+
     
 window.onload =
     function() {
