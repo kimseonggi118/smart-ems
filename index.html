@@ -3129,10 +3129,15 @@ ${
                 📢 응급실 메시지
             </div>
 
-            ${
-                hospital.emergencyMessages
-                    .map(function(message) {
-
+${
+    hospital.emergencyMessages
+        .filter(function(message, index, array) {
+            return index === array.findIndex(function(item) {
+                return item.text === message.text;
+            });
+        })
+        .map(function(message) {
+            
                         return `
                             <div
                                 style="
@@ -3142,21 +3147,29 @@ ${
                             >
                                 ${message.text}
 
-                                ${
-                                    message.date
-                                        ? `
-                                            <div
-                                                style="
-                                                    margin-top:3px;
-                                                    font-size:11px;
-                                                    color:#777;
-                                                "
-                                            >
-                                                등록일시 : ${message.date}
-                                            </div>
-                                          `
-                                        : ""
-                                }
+                               ${
+    message.date
+        ? `
+            <div
+                style="
+                    margin-top:3px;
+                    font-size:11px;
+                    color:#777;
+                "
+            >
+                등록일시 : ${
+                    String(message.date).length >= 12
+                        ? String(message.date).slice(0,4) + "-" +
+                          String(message.date).slice(4,6) + "-" +
+                          String(message.date).slice(6,8) + " " +
+                          String(message.date).slice(8,10) + ":" +
+                          String(message.date).slice(10,12)
+                        : message.date
+                }
+            </div>
+        `
+        : ""
+}
 
                             </div>
                         `;
