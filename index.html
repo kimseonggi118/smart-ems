@@ -103,26 +103,36 @@
 
         /* 증상 */
 
-        .symptom-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 9px;
-        }
+.symptom-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
 
-        .symptom {
-            background: white;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            padding: 16px 5px;
-            font-size: 15px;
-            font-weight: bold;
-        }
+.symptom {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 18px 8px;
+    min-height: 82px;
 
-        .symptom.active {
-            border-color: #1565c0;
-            background: #eaf3ff;
-            color: #1565c0;
-        }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 14px;
+    font-weight: 800;
+    color: #334155;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.symptom.active {
+    border: 2px solid #1565c0;
+    background: #eef6ff;
+    color: #1565c0;
+}
 
         /* 병원 */
 
