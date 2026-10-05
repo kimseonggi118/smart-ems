@@ -744,36 +744,36 @@ if ("serviceWorker" in navigator) {
 
 </button>
 
-<div style="position: relative;">
+<div style="position: relative; display: inline-block;">
 
     <button
+        type="button"
         class="refresh"
         id="userModeButton">
-
         👤 사용자
-
     </button>
 
     <div
         id="userModeMenu"
-style="
-    display: none;
-    position: absolute;
-    right: 0;
-    bottom: 100%;
-    margin-bottom: 6px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    min-width: 160px;
-    z-index: 1000;
-    overflow: hidden;
-">
+        style="
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 6px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            min-width: 160px;
+            z-index: 9999;
+            overflow: hidden;
+        ">
 
         <button
             type="button"
             id="emsModeButton"
             style="
+                display: block;
                 width: 100%;
                 padding: 12px;
                 border: 0;
@@ -788,6 +788,7 @@ style="
             type="button"
             id="hwaseongModeButton"
             style="
+                display: block;
                 width: 100%;
                 padding: 12px;
                 border: 0;
@@ -799,8 +800,6 @@ style="
         </button>
 
     </div>
-
-</div>
 
     </div>
 
