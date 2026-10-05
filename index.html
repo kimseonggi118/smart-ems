@@ -117,6 +117,7 @@
     min-height: 82px;
 
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 
@@ -128,6 +129,13 @@
     transition: 0.2s;
 }
 
+.symptom-icon {
+    display: block;
+    font-size: 26px;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+        
 .symptom.active {
     border: 2px solid #1565c0;
     background: #eef6ff;
@@ -749,37 +757,40 @@ if ("serviceWorker" in navigator) {
 
     </div>
 
-<div class="symptom-grid">
+<button
+    class="symptom"
+    onclick="selectSymptom('화상', this)">
+    <span class="symptom-icon">🔥</span>
+    <span>화상</span>
+</button>
 
-    <button
-        class="symptom"
-        onclick="selectSymptom('화상', this)">
-        🔥 화상
-    </button>
+<button
+    class="symptom"
+    onclick="selectSymptom('외상', this)">
+    <span class="symptom-icon">💥</span>
+    <span>외상</span>
+</button>
 
-    <button
-        class="symptom"
-        onclick="selectSymptom('외상', this)">
-        💥 외상
-    </button>
+<button
+    class="symptom"
+    onclick="selectSymptom('심뇌혈관', this)">
+    <span class="symptom-icon">❤️</span>
+    <span>심·뇌혈관</span>
+</button>
 
-    <button
-        class="symptom"
-        onclick="selectSymptom('심뇌혈관', this)">
-        ❤️ 심·뇌혈관
-    </button>
+<button
+    class="symptom"
+    onclick="selectSymptom('일반', this)">
+    <span class="symptom-icon">🏥</span>
+    <span>일반 응급</span>
+</button>
 
-    <button
-        class="symptom"
-        onclick="selectSymptom('일반', this)">
-        🏥 일반 응급
-    </button>
-
-    <button
-        class="symptom"
-        onclick="selectSymptom('화학방사선', this)">
-        ☣️ 화학물질·방사선
-    </button>
+<button
+    class="symptom"
+    onclick="selectSymptom('화학방사선', this)">
+    <span class="symptom-icon">☣️</span>
+    <span>화학물질·방사선</span>
+</button>
 
 </div>
 
