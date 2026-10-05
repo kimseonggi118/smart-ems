@@ -391,6 +391,7 @@
 
 .recommend-card {
     background: white;
+    border: 1px solid #e2e8f0;
     border-radius: 14px;
     padding: 14px;
     margin-bottom: 12px;
@@ -429,7 +430,7 @@
 }
 
 .recommend-name {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 900;
     margin-bottom: 6px;
 }
@@ -473,8 +474,8 @@
 }
 
 .reason-box {
-    background: #fffaf0;
-    border: 1px solid #ffe0a3;
+    background: #f8fbff;
+    border: 1px solid #dbeafe;
 }
 
 .arrival-box {
@@ -815,7 +816,7 @@ if ("serviceWorker" in navigator) {
         align-items:center;
      ">
     
-    <span>2. 환자 정보 및 바이탈</span>
+   <span>2. 환자 정보 및 바이탈 (선택 입력)</span>
 
     <button
         type="button"
@@ -829,13 +830,13 @@ if ("serviceWorker" in navigator) {
             color:#1565c0;
             cursor:pointer;
         "
-    >
-        접기 ▲
-    </button>
+>
+    펼치기 ▼
+</button>
 
 </div>
 
-<div class="vital-grid" id="vitalSection">
+<div class="vital-grid" id="vitalSection" style="display:none;">
 
         <div class="vital-field">
             <label>나이</label>
@@ -959,9 +960,9 @@ if ("serviceWorker" in navigator) {
 
 <div class="patient-summary-card">
 
-    <div class="title">
-        입력 요약
-    </div>
+  <div class="title">
+    입력된 환자 정보 요약
+</div>
 
     <div class="patient-summary-grid">
 
@@ -1047,8 +1048,7 @@ if ("serviceWorker" in navigator) {
 </div>
 
 <div class="recommend-info" id="recommendInfo">
-    ℹ️ 현재는 GPS와 실제 응급의료기관 데이터를 기준으로 표시합니다.
-    질환별 병원 추천은 중증질환 수용가능정보 연결 후 적용됩니다.
+    ℹ️ 환자 상태, 병원 진료 역량, 실시간 수용 정보 및 이동거리를 종합하여 표시합니다.
 </div>
 <div id="hospitalList">
 
@@ -2878,11 +2878,11 @@ ${
         
                     <div class="recommend-score">
 
-                        ${
-                            currentHospitalTab === "near"
-                                ? "거리순"
-                                : "추천 검토"
-                        }
+                       ${
+    currentHospitalTab === "near"
+        ? "거리순"
+        : "추천"
+}
 
                     </div>
 
