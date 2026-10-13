@@ -3386,7 +3386,8 @@ document.getElementById("userModeButton")
 document.getElementById("hwaseongModeButton")
     .addEventListener("click", function() {
 
-        alert("화성소방대 클릭 확인");
+        // 화성소방대 모드 저장
+        currentLocationMode = "hwaseong";
 
         userLatitude = 37.2162201;
         userLongitude = 127.0711880;
@@ -3422,13 +3423,15 @@ document.getElementById("hwaseongModeButton")
 document.getElementById("emsModeButton")
     .addEventListener("click", function() {
 
+        // 구급대원 GPS 모드 저장
+        currentLocationMode = "ems";
+
         document.getElementById("userModeMenu")
             .style.display = "none";
 
         getLocation();
 
     });
-
     
 window.onload =
     function() {
