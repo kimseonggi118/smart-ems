@@ -738,7 +738,7 @@ if ("serviceWorker" in navigator) {
 
 <button
     class="refresh"
-    onclick="getLocation()">
+    onclick="refreshLocation()">
 
     위치 갱신
 
@@ -1165,6 +1165,26 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
     return R * c;
 }
+
+    // 현재 선택된 위치 모드
+let currentLocationMode = "ems";
+
+// 위치 갱신 버튼 처리
+function refreshLocation() {
+
+    if (currentLocationMode === "hwaseong") {
+
+        document.getElementById("hwaseongModeButton")
+            .click();
+
+    } else {
+
+        getLocation();
+
+    }
+
+}
+
 
 
 function getLocation() {
