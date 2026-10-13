@@ -3398,6 +3398,17 @@ document.getElementById("hwaseongModeButton")
 
     });
 
+    // 🚑 구급대원 모드 - 현재 GPS 위치 사용
+document.getElementById("emsModeButton")
+    .addEventListener("click", function() {
+
+        document.getElementById("userModeMenu")
+            .style.display = "none";
+
+        getLocation();
+
+    });
+
     
 window.onload =
     function() {
